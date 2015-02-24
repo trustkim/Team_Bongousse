@@ -1,5 +1,3 @@
-package test.trustkim;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -53,10 +51,10 @@ public class Problem25 {
 	public static void Print(int start, int level){
 		for(int i=start;i<level;i++) System.out.print(str.charAt(i));
 		System.out.print("\t");
-	}
+	}	// test func
 	public static void Print_App(){
 		for(int i=0;i<26;i++)
 			System.out.print(appeared[i]);
 			System.out.println();
-	}// test func
+	}	// test func
 }
