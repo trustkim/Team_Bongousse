@@ -19,7 +19,7 @@ public class Problem25 {
 				System.out.println("result = " + longestPalindrome(str, N));
 			}			
 			input.close();
-		}catch(FileNotFoundException e){System.out.println("file not found..");}	
+		}catch(FileNotFoundException e){System.out.println("file not found..");}
 	}
 
 	static int longestPalindrome(String s, int size){		//가장 긴 회문을 찾는 함수
@@ -33,7 +33,7 @@ public class Problem25 {
 			while(nextPermutation(ary)){					//순열을 돌려가면서
 				System.out.println(ary);
 				if(isPalindrome(ary))						//회문이면
-					//System.out.println("size = " + size);
+					System.out.println("size = " + size);
 					return size;							//현재의 size를 리턴한다.
 			}
 		}
@@ -45,11 +45,11 @@ public class Problem25 {
 	static boolean isPalindrome(char [] s){		//회문인지 판별하는 함수
 		if(s.length%2 == 0){					//s[i]와 s[s.length-1-i]를 비교해서 다른경우가 있다면 false를 리턴, 모두 통과하면 true를 리턴
 			for(int i=0;i<s.length/2;i++){
-				if(s[i] != s[s.length-1-i])
+				if(s[i] != s[s.length-1-i])		// s.length/2 ~ (s.length/2 +1)를 중심으로 정확히 대칭 되는 문자를 비교
 					return false;
 			}
 		}
-		else if(s.length%2 == 1){
+		else if(s.length%2 == 1){				// 홀수 일 때는?
 			for(int i=0;i<s.length/2;i++){
 				if(s[i] != s[s.length-1-i])
 					return false;
@@ -58,7 +58,7 @@ public class Problem25 {
 		return true;
 
 	}
-	static boolean nextPermutation(char[] array){	//순열. workshop4주차의 pdf파일에 있는 nextPermutation을 int에서 char로 수정.
+	static boolean nextPermutation(char[] array){	//순열. workshop4주차의 슬라이드2 pdf파일에 있는 nextPermutation을 int에서 char로 수정.
 		int i=array.length -1;
 		while(i>0 && array[i-1] >= array[i])
 			i--;
