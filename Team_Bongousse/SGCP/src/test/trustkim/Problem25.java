@@ -10,6 +10,8 @@ public class Problem25 {
 	public static int N;
 	
 	public static void main(String args[]){		
+		long start = System.currentTimeMillis();
+		
 		try{
 			Scanner input = new Scanner(new File("input25.txt"));
 			for(int T = input.nextInt(); T > 0; T--){			
@@ -19,6 +21,8 @@ public class Problem25 {
 			}
 			input.close();
 		}catch(FileNotFoundException e){System.out.println("file not found..");}
+		
+		System.out.println("Elapsed: "+(((long)System.currentTimeMillis())-start)/1000.0);
 	}
 	public static void appear(int start, int level){
 		for(int i=0;i<26;i++){appeared[i]=0;}	// init appeared
