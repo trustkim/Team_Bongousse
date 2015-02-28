@@ -16,7 +16,7 @@ public class Problem26 {
 				}
 				N=input.nextInt();
 				build(N);
-				dPrint(N);
+				Print(N);
 			}
 			input.close();
 		}catch(FileNotFoundException e){System.out.println("file not found..");}
@@ -33,28 +33,19 @@ public class Problem26 {
 							matH[j][i] *= (-1);
 						}
 						if(i>j) {
-							matH[j][i] = matH[j][(i-1)/2];
-						}else if(i<j) matH[j][i] = matH[(j-1)/2][i];
+							matH[j][i] = matH[j][i-N/2];
+						}else if(i<j) matH[j][i] = matH[j-N/2][i];
 					}
 				}
 			}
 			
 		}
 	}
-	
 	public static void Print(int N){
 		for(int i=0;i<N;i++){
 			for(int j=0;j<N;j++){ 
 				if(matH[j][i]==-1) System.out.print(0+" ");
 				else System.out.print(matH[j][i]+" ");
-			}			
-			System.out.print("\n");
-		}
-	}
-	public static void dPrint(int N){
-		for(int i=0;i<N;i++){
-			for(int j=0;j<N;j++){ 
-				System.out.print(matH[j][i]+" ");
 			}			
 			System.out.print("\n");
 		}

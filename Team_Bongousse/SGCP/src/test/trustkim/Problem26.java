@@ -8,7 +8,7 @@ public class Problem26 {
 	public static final int MAX = 1024;
 	public static int[][] matH = new int [MAX][MAX];
 	public static int N;
-	
+
 	public static void main(String args[]){		
 		try{
 			Scanner input = new Scanner(new File("input26.txt"));
@@ -35,8 +35,8 @@ public class Problem26 {
 							matH[j][i] *= (-1);
 						}
 						if(i>j) {
-							matH[j][i] = matH[j][(i-1)/2];
-						}else if(i<j) matH[j][i] = matH[(j-1)/2][i];
+							matH[j][i] = matH[j][i-N/2];
+						}else if(i<j) matH[j][i] = matH[j-N/2][i];
 					}
 				}
 			}
