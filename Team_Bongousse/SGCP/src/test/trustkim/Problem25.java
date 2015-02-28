@@ -40,14 +40,13 @@ public class Problem25 {
 		else return level;
 	}
 	public static boolean promising(int start, int level){
-		appear(start, level); //Print(start, level); Print_App();
+		appear(start, level); if(level>=247) Comp_App(start, level); //Print(start, level);
 		if(level%2==0){
 			for(int i=0;i<26;i++) if(appeared[i]%2!=0) return false;
 		}else {
 			int the_one_counter = 0;
 			for(int i=0;i<26;i++) {
-				if(appeared[i]%2!=0&&appeared[i]>1) return false;
-				if(appeared[i]==1) the_one_counter++;
+				if((appeared[i]%2)!=0) the_one_counter++;
 				if(the_one_counter>1) return false;
 			}
 		}
@@ -57,10 +56,17 @@ public class Problem25 {
 	public static void Print(int start, int level){
 		for(int i=start;i<level;i++) System.out.print(str.charAt(i));
 		System.out.print("\t");
-	}
+	}// test func
 	public static void Print_App(){
 		for(int i=0;i<26;i++)
-			System.out.print(appeared[i]);
+			System.out.print(appeared[i]+", ");
 			System.out.println();
+	}// test func
+	
+	public static void Comp_App(int start, int level){
+		String answer = "mixdaxxckpkjrjegxihfekjfrjjjlhlkbsdbttkovdsnmzzvseisnfbbidewiftboggtnwklvioqzgszlmmdodhpxoeiupwadudfxlukwypydxtajqqqdejjgvbnvzmvjztwhpjqebwjtunuwcvrlythiorggbhgojvgvjqykvqregsvatuwnozmrwhscirdatockuycyyrpywusxvghptrrftkrpwucvognzmppwimjudqmjvcrmac";
+		if(answer.equals(str.substring(start, start+level))){
+			System.out.println("!! THE ANSWER!!!"); Print_App();
+		}
 	}// test func
 }

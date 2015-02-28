@@ -40,21 +40,10 @@ public class Problem25 {
 		}else {
 			int the_one_counter = 0;
 			for(int i=0;i<26;i++) {
-				if(appeared[i]%2!=0&&appeared[i]>1) return false;
-				if(appeared[i]==1) the_one_counter++;
+				if(appeared[i]%2!=0) the_one_counter++;
 				if(the_one_counter>1) return false;
 			}
 		}
 		return true;
 	}
-	
-	public static void Print(int start, int level){
-		for(int i=start;i<level;i++) System.out.print(str.charAt(i));
-		System.out.print("\t");
-	}	// test func
-	public static void Print_App(){
-		for(int i=0;i<26;i++)
-			System.out.print(appeared[i]);
-			System.out.println();
-	}	// test func
 }
