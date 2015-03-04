@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class Problem28 {
 
 	public static void main(String args[]){		
+		long start = System.currentTimeMillis();
 		try{
 			Scanner input = new Scanner(new File("input28.txt"));
 			for(int T = input.nextInt(); T > 0; T--){			
@@ -23,6 +24,7 @@ public class Problem28 {
 			}
 			input.close();
 		}catch(FileNotFoundException e){System.out.println("file not found..");}
+		System.out.println("Elapsed: "+(((long)System.currentTimeMillis())-start)/1000.0);
 	}
 	
 	public static boolean check(int[] watch_table){
