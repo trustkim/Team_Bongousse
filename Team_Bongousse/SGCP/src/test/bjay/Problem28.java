@@ -21,8 +21,8 @@ public class Problem28 {
 						m_btn[i][k] = input.nextInt();
 				} // file read complete
 				
-				mincount = 0;
-				solve(m_btn, watch_table, 0);
+				mincount = 50;
+				solve(m_btn, new int[9], watch_table, 0);
 				
 				System.out.println(mincount);
 				
@@ -32,23 +32,45 @@ public class Problem28 {
 		System.out.println("Elapsed: "+(((long)System.currentTimeMillis())-start)/1000.0);
 	}
 	
-	public static void solve(int [][] m_btn, int [] watch_table, int count){
-		if(watch_table[0]==12 && watch_table[1]==12 && watch_table[2]==12 && watch_table[3]==12 && watch_table[4]==12 &&
-			watch_table[5]==12 && watch_table[6]==12 && watch_table[7]==12 && watch_table[8]==12){
-			if(mincount > count){
-				mincount = count;
-			}
+	public static void solve(int [][] m_btn, int [] set_m_btn, int [] watch_table, int level){
+		for(int i=0;i<m_btn.length;i++){
+			System.out.print(set_m_btn[i] + " ");
+		}
+		System.out.println();
+		if(!promising(set_m_btn)){
 			return;
 		}
-		else if(count >= 27){
+		else if(check(watch_table)){
+			if(mincount >= level){
+				mincount = level;
+			}
 			return;
 		}
 		else
 			for(int i=0;i<m_btn.length;i++){
+				set_m_btn[i]++;
 				for(int j=0;j<m_btn[i].length;j++){
-					watch_table[m_btn[i][j]-1] += 3;
+					watch_table[m_btn[i][j]-1] = watch_table[m_btn[i][j]-1] + 3;
+					if(watch_table[m_btn[i][j]-1] > 12)
+						watch_table[m_btn[i][j]-1] = watch_table[m_btn[i][j]-1]-12;
 				}
-				solve(m_btn, watch_table, ++count);
+				solve(m_btn, set_m_btn, watch_table, level++);
 			}
+	}
+	
+	public static boolean promising(int [] set_m_btn){
+		for(int i=0;i<set_m_btn.length;i++){
+			if(set_m_btn[i]>=4)
+				return false;
+		}
+		return true;
+	}
+	
+	public static boolean check(int [] watch_table){
+		for(int i=0;i<watch_table.length;i++){
+			if(watch_table[i] != 12)
+				return false;
+		}
+		return true;
 	}
 }
