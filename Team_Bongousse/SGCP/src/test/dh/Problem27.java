@@ -1,5 +1,6 @@
 package test.dh;
 
+
 //by dh_ver1.0
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,7 +9,6 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 public class Problem27 {
-
 
 	public static void reCur(String str[], int num[], int limit[], int count, int k){
 		if(count == k-1){
@@ -27,11 +27,9 @@ public class Problem27 {
 			}		
 			reCur(str, num, limit, count, k);
 		}
-	}
-	
+	}	
 	
 	public static void main(String args[]){
-
 		try{
 			Scanner input = new Scanner(new File("input27.txt"));
 			for(int T = input.nextInt(); T > 0; T--){
@@ -75,8 +73,6 @@ public class Problem27 {
 			}			
 			input.close();
 		}catch(FileNotFoundException e){System.out.println("file not found..");}
-
-
-
 	}
+	
 }
