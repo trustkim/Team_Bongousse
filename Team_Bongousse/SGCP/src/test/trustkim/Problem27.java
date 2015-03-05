@@ -30,14 +30,12 @@ public class Problem27 {
 				}	// read grid_B
 				// file read complete
 				
-				// merge grids or sorting each grids
-				grid = merge(grid_A, grid_B);
-				grid = sort(grid);
+				// merge, transpose grids and sorting each wheels
+				grid = sort(transpose(merge(grid_A, grid_B)));
 				Print_grid(grid); System.out.println();
 				
 				// get k passwords
-				//int[] wheel_index = {0,0,0,0,0};
-				System.out.println(password("",0,0,0));
+				//System.out.println(password("",0,0,0));
 			}
 			input.close();
 		}catch(FileNotFoundException e){System.out.println("file not found..");}
@@ -62,31 +60,33 @@ public class Problem27 {
 		}
 		return C;
 	}
-	public static char[][] sort(char[][] grid){
-		for(int i=0;i<5;i++) {
-			char[] temp = new char[6];
-			for(int j=0;j<6;j++)
-				temp[j] = grid[j][i];	// temp reads a wheel in a loop
-			for(int j=0;j<6;j++) grid[j][i] = 0;
-			Arrays.sort(temp);
-			for(int j=0;j<temp.length;j++)
-				grid[j][i] = temp[j];
+	public static char[][] transpose(char[][] grid){
+		char[] temp = new char[6];
+		// trim & transpose
+		char[][] trans_grid = new char[5][];
+		
+		for(int i=0;i<5;i++){
+			int wheel_length = 6;
+			int cnt=0;
+			for(int j=0;j<6;j++){
+				if(grid[j][i]==0) wheel_length--;
+				else temp[cnt++] = grid[j][i];
+			}
+			if(wheel_length>0) trans_grid[i] = new char[wheel_length];
+			for(int j=0;j<wheel_length;j++)
+				trans_grid[i][j] = temp[j];
 		}
+		return trans_grid;
+	}
+	public static char[][] sort(char[][] grid){
+		for(int i=0;i<5;i++)
+			Arrays.sort(grid[i]);		
+
 		return grid;
 	}
 	public static String password(String pass, int cnt, int level, int i){
-		if(i<5) {
-			char temp = grid[i][level];
-			if(temp!=0){
-				pass+=temp;
-				if(level<4){
-					pass = password(pass,cnt,level++,0);
-				}
-			}
-			pass = password(pass,cnt,level,i++);
-			
-		}
-
+		
+		
 		return "No";
 	}
 	public static void reCur(String str[], int num[], int limit[], int count, int k){
@@ -108,10 +108,10 @@ public class Problem27 {
 		}
 	}
 	public static void Print_grid(char[][] grid){
-		for(int i=0;i<6;i++)
-			for(int j=0;j<5;j++){
-				System.out.print(grid[i][j]+"("+(int)grid[i][j]+")");
-				if(j==4) System.out.println();
+		for(int j=0;j<5;j++)
+			for(int i=0;i<grid[j].length;i++){
+				System.out.print(grid[j][i]);
+				if(i==grid[j].length-1) System.out.println();
 			}
 	}
 }
