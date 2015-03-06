@@ -50,7 +50,9 @@ public class Problem28 {
 				if(result>MAX) result = cnt;
 				else result = (result>cnt?cnt:result);
 			if(level<8){
-				int temp_cnt = cnt; int[] temp = watch_table;
+				int temp_cnt = cnt; int[] temp = new int[9];
+				for(int j=0;j<9;j++)
+					temp[j] = watch_table[j];
 				watchs(temp, level+1, temp_cnt);
 			}
 		}
