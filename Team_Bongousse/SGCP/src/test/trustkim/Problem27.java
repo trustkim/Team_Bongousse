@@ -9,13 +9,14 @@ import java.util.Scanner;
 public class Problem27 {
 	public static char[][] grid;
 	public static int k;
+	public static int cnt;
 	
 	public static void main(String args[]){		
 		long start = System.currentTimeMillis();
 		try{
 			Scanner input = new Scanner(new File("input27.txt"));
 			for(int T = input.nextInt(); T > 0; T--){			
-				k = input.nextInt(); input.nextLine();
+				k = input.nextInt(); input.nextLine(); cnt=0;
 				char[][] grid_A = new char[6][5];
 				for(int i=0;i<6;i++) {
 					String temp = input.nextLine();
@@ -32,10 +33,10 @@ public class Problem27 {
 				
 				// merge, transpose grids and sorting each wheels
 				grid = sort(transpose(merge(grid_A, grid_B)));
-				Print_grid(grid); System.out.println();
+				//Print_grid(grid); System.out.println();
 				
 				// get k passwords
-				//System.out.println(password("",0,0,0));
+				System.out.println(password("",0));
 			}
 			input.close();
 		}catch(FileNotFoundException e){System.out.println("file not found..");}
@@ -79,39 +80,34 @@ public class Problem27 {
 		return trans_grid;
 	}
 	public static char[][] sort(char[][] grid){
-		for(int i=0;i<5;i++)
-			Arrays.sort(grid[i]);		
-
+		for(int i=0;i<grid.length;i++)
+			if(grid[i] != null) Arrays.sort(grid[i]);		
 		return grid;
 	}
-	public static String password(String pass, int cnt, int level, int i){
-		
-		
+	public static String password(String pass, int level){
+		if(grid[level]!=null){
+			for(int i=0;i<grid[level].length;i++){
+				if(pass.length()==level) pass += grid[level][i];
+				else pass=pass.substring(0, level)+grid[level][i];
+				if(level<4){
+					String temp_pass = password(pass, level+1); if(cnt==k) return temp_pass;
+					pass = temp_pass.equals("No")?pass:temp_pass;
+				}else {
+					cnt++;
+					if(cnt==k) return pass;
+				}
+			}
+		}
 		return "No";
 	}
-	public static void reCur(String str[], int num[], int limit[], int count, int k){
-		if(count == k-1){
-			StringBuilder output = new StringBuilder();
-			for(int i = 0; i < 5; i++){	output.append(str[i].charAt(num[i])); }
-			System.out.println(output);
-		}
-		else{
-			count++;
-			num[4]++;
-			for(int j = 4; j >= 0; j--){
-				if(num[j] > limit[j]-1){
-					if(j == 0){System.out.println("NO"); return;}
-					else{num[j] = 0; num[j-1]++;}
-				}
-			}		
-			reCur(str, num, limit, count, k);
-		}
-	}
+
 	public static void Print_grid(char[][] grid){
 		for(int j=0;j<5;j++)
-			for(int i=0;i<grid[j].length;i++){
-				System.out.print(grid[j][i]);
-				if(i==grid[j].length-1) System.out.println();
-			}
+			if(grid[j]!=null) {
+				for(int i=0;i<grid[j].length;i++){
+					System.out.print(grid[j][i]);
+					if(i==grid[j].length-1) System.out.println();
+				}
+			}else System.out.println();
 	}
 }
