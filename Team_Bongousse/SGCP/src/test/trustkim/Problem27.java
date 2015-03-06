@@ -86,15 +86,15 @@ public class Problem27 {
 	}
 	public static String password(String pass, int level){
 		if(grid[level]!=null){
-			for(int i=0;i<grid[level].length;i++){
-				if(pass.length()==level) pass += grid[level][i];
-				else pass=pass.substring(0, level)+grid[level][i];
-				if(level<4){
-					String temp_pass = password(pass, level+1); if(cnt==k) return temp_pass;
-					pass = temp_pass.equals("No")?pass:temp_pass;
+			for(int i=0;i<grid[level].length;i++){					// 한 레벨에서 휠에있는 모든 문자를 확인
+				if(pass.length()==level) pass += grid[level][i];	// 새로 pass에 문자를 추가할 때
+				else pass=pass.substring(0, level)+grid[level][i];	// pass에서 이전 문자를 지우고 새로 넣을 때
+				if(level<4){										// 5자리 pass가 완성이 안됐다면 다음 레벨로 진행
+					String temp_pass = password(pass, level+1); if(cnt==k) return temp_pass;	// 중간에 정답이 나온다면 리커전 탈출
+					pass = temp_pass.equals("No")?pass:temp_pass;	// 중간에 No가 나올 수 있는데 1번 휠을 검사하는 레벨이 종료 될 때만 No가 출력되게 걸러줌
 				}else {
 					cnt++;
-					if(cnt==k) return pass;
+					if(cnt==k) return pass;	// 조건을 만족하면 리커전 탈출 시작
 				}
 			}
 		}
