@@ -74,6 +74,7 @@ public class Problem28 {
 		try{
 			Scanner input = new Scanner(new File("input28.txt"));
 			for(int T = input.nextInt(); T > 0; T--){
+				System.out.println("T == " + T);
 
 				//최초 9개 시계들의 시간 읽기
 				int initTime[] = new int[9];
@@ -87,8 +88,20 @@ public class Problem28 {
 					for(int c = 0; c < head; c++){ M[l][c] = input.nextInt()-1; }
 				}
 				
+				System.out.println("initTime[] >>");
+				for(int i = 0; i < 9; i++){System.out.print(" "+initTime[i]);}
+				System.out.println();
 				
-				reCur(initTime, M, 1);
+				System.out.println("M[][] >>");
+				for(int i = 0; i < 9; i++){
+					for(int j = 0; j < M[i].length; j++){
+						System.out.print(" " + M[i][j]);
+					}
+					System.out.println();
+				}
+				
+				
+				//reCur(initTime, M, 1);
 			}
 			input.close();
 		}catch(FileNotFoundException e){System.out.println("file not found..");}
