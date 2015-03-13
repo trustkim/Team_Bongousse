@@ -2,6 +2,8 @@ package test.trustkim;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.AbstractQueue;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -30,11 +32,12 @@ public class Problem30 {
 					}// file read complete
 				
 				// data structure setting
-				Print(grid);
+				//Print(grid);
 				
 				// solve
-				time=0;
-				System.out.println(solve(0,0,time)+" "+time);
+				queue = new LinkedList<int[]>();
+				//System.out.println(solve(0,0,time)+" "+time);
+				BFS(0,0);
 			}
 		}catch (FileNotFoundException e) { e.printStackTrace();}
 		System.out.println("Elapsed: "+(((long)System.currentTimeMillis())-start)/1000.0);
@@ -65,6 +68,37 @@ public class Problem30 {
 		if(x>=0&&y-1>=0&&x<N&&y-1<N)
 			grid[x][y-1] = FIRE;
 		return grid;
+	}
+	
+	public static void BFS(int x0, int y0){
+		queue.offer(new int[]{x0,y0,0});
+		while(!queue.isEmpty()){
+			int[] vertex = queue.poll();
+			int x=vertex[0];
+			int y=vertex[1];
+			int t=vertex[2];
+
+			if(x==N-1&&y==N-1) {System.out.println(t); return;}
+			else {
+				
+				grid[x][y] = PATH;
+				if(x-1>=0&&y>=0&&x-1<N&&y<N&&grid[x-1][y]==0)
+					queue.add(new int[]{x-1,y,t+1});
+				if(x>=0&&y+1>=0&&x<N&&y+1<N&&grid[x][y+1]==0)
+					queue.add(new int[]{x,y+1,t+1});
+				if(x+1>=0&&y>=0&&x+1<N&&y<N&&grid[x+1][y]==0)
+					queue.add(new int[]{x+1,y,t+1});
+				if(x>=0&&y-1>=0&&x<N&&y-1<N&&grid[x][y-1]==0)
+					queue.add(new int[]{x,y-1,t+1});
+				
+				if(t+1%K==0) {
+					for(int i=0;i<N;i++)
+						for(int j=0;j<N;j++)
+							if(grid[i][j]==FIRE) burn(grid,i,j);
+				}
+			}
+		}
+		System.out.println(-1);
 	}
 	public static void Print(int [][] grid) {
 		for(int i=0;i<grid.length;i++){
