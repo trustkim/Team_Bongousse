@@ -1,5 +1,3 @@
-package test.trustkim;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -20,7 +18,6 @@ public class Problem30 {
 	private static Queue<int[]> queue;
 	
 	public static void main(String [] args) {
-		long start = System.currentTimeMillis();
 		try {
 			Scanner input = new Scanner(new File("input30.txt"));
 			for(int T=input.nextInt();T>0;T--) {
@@ -63,9 +60,7 @@ public class Problem30 {
 				BFS(0,0);
 			}
 		}catch (FileNotFoundException e) { e.printStackTrace();}
-		System.out.println("Elapsed: "+(((long)System.currentTimeMillis())-start)/1000.0);
 	}
-	
 	public static void BFS(int x0, int y0){
 		queue.offer(new int[]{x0,y0,0});
 		while(!queue.isEmpty()){
@@ -74,7 +69,6 @@ public class Problem30 {
 			int y=vertex[1];
 			int t=vertex[2];
 			
-			//if(grid[x][y]!=PATHWAY) ;
 			if(grid[x][y]!=PATHWAY||fireMaze[x][y]<t+1) ;
 			else if(x==N-1&&y==N-1) {System.out.println(t); return;}
 			else {
@@ -91,12 +85,5 @@ public class Problem30 {
 			}
 		}
 		System.out.println(-1);
-	}
-	public static void Print(int [][] grid) {
-		for(int i=0;i<grid.length;i++){
-			for(int j=0;j<grid[i].length;j++)
-				System.out.print(grid[i][j]+" ");
-			System.out.println();
-		}
 	}
 }
