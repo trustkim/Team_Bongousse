@@ -34,7 +34,7 @@ public class Problem31 {
 				for(int i=0;i<N;i++)
 					for(int j=0;j<N;j++) {
 						grid[i][j] = sc.nextInt();
-						turnCount[i][j]=-1;
+						turnCount[i][j]=999999999;
 					}
 				turnCount[init.x][init.y] = 0;
 				
@@ -53,8 +53,8 @@ public class Problem31 {
 			for(int d=0; d<4; d++) {
 				Cell next = new Cell(cell.x+offsetX[d], cell.y+offsetY[d]);
 				
-				while(next.valid() && grid[next.x][next.y]==0 && turnCount[next.x][next.y]==-1 ) {
-					turnCount[next.x][next.y] = t+1;
+				while(next.valid() && grid[next.x][next.y]==0) {
+					turnCount[next.x][next.y] = Math.min(turnCount[next.x][next.y], t+1);
 					
 					if(next.x==dest.x && next.y==dest.y) {
 						System.out.println(t);
