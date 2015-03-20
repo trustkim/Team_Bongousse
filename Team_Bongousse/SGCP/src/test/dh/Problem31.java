@@ -27,21 +27,21 @@ public class Problem31 {
 	final static int flagY[] = {1, 0, -1, 0}; //열의 변화값
 
 	public static boolean CanGo(int ary[][], int N, int sx, int sy, int dx, int dy){
+		int checkAry[][] = new int[N][N];
 		Queue<canCell> queue = new LinkedList<canCell>();
 		canCell src = new canCell(sx, sy);
 		queue.offer(src);		
 		while(!queue.isEmpty()){
 			canCell current = queue.poll();
-			if(current.x == dx && current.y == dy){System.out.println("pass");return true;}
+			if(current.x == dx && current.y == dy){return true;}
 			for(int d = 0; d < 4; d++){
 				canCell next = new canCell(current.x + flagX[d], current.y + flagY[d]);
-				if(next.x >= 0 && next.x < N && next.y >=0 && next.y < N && ary[next.x][next.y] == 0){
-					ary[next.x][next.y] = -1;
+				if(next.x >= 0 && next.x < N && next.y >=0 && next.y < N && ary[next.x][next.y] != 1 && checkAry[next.x][next.y] != -1){
+					checkAry[next.x][next.y] = -1;
 					queue.offer(next);
 				}
 			}
 		}
-		System.out.println("block");
 		return false;
 	}
 
@@ -62,20 +62,21 @@ public class Problem31 {
 					}
 				}
 
-				if(!CanGo(Arrays.copyOf(grid, N), N, srcX, srcY, dstX, dstY)){
+
+				if(!CanGo(grid, N, srcX, srcY, dstX, dstY)){
 					System.out.println(-1);
 				}
 				else{
-
 					int num = 0;
 					boolean going = true;
 					while(going){
+						
+						int checkAry[][] = new int[N][N];
+
 						Queue<Cell> queue = new LinkedList<Cell>();
 						Cell Src = new Cell(srcX, srcY, 0, 0);
 						queue.offer(Src);
 
-						int copyGrid[][] = Arrays.copyOf(grid, N);
-						
 						while(!queue.isEmpty()){
 							Cell current = queue.poll();
 							if(current.x == dstX && current.y == dstY){
@@ -102,23 +103,21 @@ public class Problem31 {
 
 								next = new Cell(current.x+flagX[d], current.y + flagY[d], m_direct, d_count);
 
-								if(next.x >= 0 && next.x < N && next.y >= 0 && next.y < N 
-										&& copyGrid[next.x][next.y] == 0 && next.turnCount <= num){
-									copyGrid[next.x][next.y] = -1; //이 길을 지나갔음을 체크해둠
+								if(next.x >= 0 && next.x < N && next.y >= 0 && next.y < N && grid[next.x][next.y] != 1 && checkAry[next.x][next.y] != -1 && next.turnCount <= num){
+									checkAry[next.x][next.y] = -1; //이 길을 지나갔음을 체크해둠
 									queue.offer(next);
 								}
 
 							}
 						}
-						System.out.println("in going...");
 						num++;
 					}
+
 
 				}
 
 			}
 			input.close(); //탐색 종료
-
 
 		} catch (FileNotFoundException e) { System.out.println("file not found.."); }		
 		long end = System.currentTimeMillis();							//시간계산 종료
