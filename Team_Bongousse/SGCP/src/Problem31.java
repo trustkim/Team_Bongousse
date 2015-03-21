@@ -43,24 +43,28 @@ public class Problem31 {
 	}
 	public static void turnBFS(Cell init, Cell dest) {
 		Queue<Cell> queue = new LinkedList<Cell>();
+		Cell cell, next, temp;
 		queue.offer(init);
 		while(!queue.isEmpty()) {
-			Cell cell = queue.poll();
+			cell = queue.poll();
 			int t = turnCount[cell.x][cell.y];
 			
 			for(int d=0; d<4; d++) {
-				Cell next = new Cell(cell.x+offsetX[d], cell.y+offsetY[d]);
+				next = new Cell(cell.x+offsetX[d], cell.y+offsetY[d]);
 				
-				while(next.valid() && turnCount[next.x][next.y]>0) {
-					turnCount[next.x][next.y] = Math.min(turnCount[next.x][next.y], t+1);
-					
-					if(next.x==dest.x && next.y==dest.y) {
-						System.out.println(t);
-						return;
+				while(next.valid() && turnCount[next.x][next.y]>=t+1) {
+					if(turnCount[next.x][next.y]>t+1) {
+						if(next.x==dest.x && next.y==dest.y) {
+							System.out.println(t);
+							return;
+						}
+						
+						temp = new Cell(next.x,next.y);
+						queue.offer(temp);
+						
+						turnCount[next.x][next.y] = t+1;
 					}
 					
-					Cell temp = new Cell(next.x,next.y);
-					queue.offer(temp);
 					next.x+=offsetX[d]; next.y+=offsetY[d];
 				}
 			}
