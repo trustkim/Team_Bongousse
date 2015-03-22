@@ -1,5 +1,3 @@
-package test.trustkim;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -26,7 +24,6 @@ public class Problem32 {
 	private static final int MAX = 999999999;
 	
 	public static void main(String [] args) {
-		long start = System.currentTimeMillis();
 		try {
 			Scanner sc = new Scanner(new File("input32.txt"));
 			for(int T=sc.nextInt();T>0;T--) {
@@ -41,21 +38,9 @@ public class Problem32 {
 				grid[init.tilt][init.x][init.y] = 0;
 				
 				BFS(init, dest);
-//				for(int i=0;i<N;i++) {
-//					for(int j=0;j<N;j++)
-//						System.out.print(String.format("%2d", (grid[0][i][j]==-1?0:grid[0][i][j]==999999999?0:grid[0][i][j]))+" ");
-//					System.out.println();
-//				}
-//				System.out.println();
-//				for(int i=0;i<N;i++) {
-//					for(int j=0;j<N;j++)
-//						System.out.print(String.format("%2d",(grid[1][i][j]==-1?0:grid[1][i][j]==999999999?0:grid[1][i][j]))+" ");
-//					System.out.println();
-//				}
 			}
 			sc.close();
 		}catch(FileNotFoundException e) { e.printStackTrace(); }
-		System.out.println("Elapsed: "+(System.currentTimeMillis()-start)/1000.0);
 	}
 	
 	public static void BFS(Cell init, Cell dest) {
