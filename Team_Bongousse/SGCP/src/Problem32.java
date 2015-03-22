@@ -100,7 +100,7 @@ public class Problem32 {
 				if(temp.valid()&&!isMovable(temp))
 					return false;
 			}else if(next.tilt==1 && d%2==0){
-				temp = new Cell(next.x,next.y+offsetY[d],next.tilt);
+				temp = new Cell(next.x+offsetY[d],next.y,next.tilt);
 				if(temp.valid()&&!isMovable(temp))
 					return false;
 			}
