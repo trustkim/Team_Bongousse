@@ -61,8 +61,8 @@ public class Problem31 {
 			for(int d=0; d<4; d++) {
 				next = new Cell(cell.x+offsetX[d], cell.y+offsetY[d]);
 				
-				while(next.valid() && turnCount[next.x][next.y]>=t+1) {
-					if(turnCount[next.x][next.y]>t+1) {
+				while(next.valid() && turnCount[next.x][next.y]>0) {	// 범위와 장애물인지 검사
+					if(turnCount[next.x][next.y]==999999999) {			//  첫 방문이면 인큐
 						if(next.x==dest.x && next.y==dest.y) {
 							System.out.println(t);
 							return;
@@ -74,7 +74,7 @@ public class Problem31 {
 						turnCount[next.x][next.y] = t+1;
 					}
 					
-					next.x+=offsetX[d]; next.y+=offsetY[d];
+					next.x+=offsetX[d]; next.y+=offsetY[d];				// 첫 방문 아니면 같은 방향으로 계속 진행
 				}
 			}
 			//System.out.println();
