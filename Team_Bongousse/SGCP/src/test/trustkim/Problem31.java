@@ -42,7 +42,7 @@ public class Problem31 {
 				turnBFS(init, dest);
 //				for(int i=0;i<N;i++) {
 //					for(int j=0;j<N;j++)
-//						System.out.print((turnCount[i][j]==999999999?0:turnCount[i][j])+" ");
+//						System.out.print((turnCount[i][j]==999999999?0:turnCount[i][j]==-1?0:turnCount[i][j])+" ");
 //					System.out.println();
 //				}
 			}
@@ -52,27 +52,32 @@ public class Problem31 {
 	}
 	public static void turnBFS(Cell init, Cell dest) {
 		Queue<Cell> queue = new LinkedList<Cell>();
+		Cell cell, next, temp;
 		queue.offer(init);
 		while(!queue.isEmpty()) {
-			Cell cell = queue.poll();
+			cell = queue.poll();
 			int t = turnCount[cell.x][cell.y];
 			
 			for(int d=0; d<4; d++) {
-				Cell next = new Cell(cell.x+offsetX[d], cell.y+offsetY[d]);
+				next = new Cell(cell.x+offsetX[d], cell.y+offsetY[d]);
 				
-				while(next.valid() && turnCount[next.x][next.y]>0 ) {
-					
-					turnCount[next.x][next.y] = Math.min(turnCount[next.x][next.y], t+1);
-					if(next.x==dest.x && next.y==dest.y) {
-						System.out.println(t);
-						return;
+				while(next.valid() && turnCount[next.x][next.y]>0) {	// 범위와 장애물인지 검사
+					if(turnCount[next.x][next.y]==999999999) {			//  첫 방문이면 인큐
+						if(next.x==dest.x && next.y==dest.y) {
+							System.out.println(t);
+							return;
+						}
+						
+						temp = new Cell(next.x,next.y);
+						queue.offer(temp);	//System.out.print("("+temp.x+", "+temp.y+") ");
+						
+						turnCount[next.x][next.y] = t+1;
 					}
-					Cell temp = new Cell(next.x,next.y);
-					queue.offer(temp);
-					next.x+=offsetX[d]; next.y+=offsetY[d];
+					
+					next.x+=offsetX[d]; next.y+=offsetY[d];				// 첫 방문 아니면 같은 방향으로 계속 진행
 				}
 			}
-			
+			//System.out.println();
 		}
 		System.out.println(-1);
 	}

@@ -13,7 +13,6 @@ public class Problem30 {
 	private static int K;
 	private static final int MAX = 2000;
 	private static final int PATHWAY = 0;
-	private static final int FIRE = 1;
 	private static final int BLOCKED = 2;
 	private static final int PATH = 3;
 	private static Queue<int[]> fireQ;
@@ -61,6 +60,8 @@ public class Problem30 {
 				// solve
 				queue = new LinkedList<int[]>();
 				BFS(0,0);
+				
+				input.close();
 			}
 		}catch (FileNotFoundException e) { e.printStackTrace();}
 		System.out.println("Elapsed: "+(((long)System.currentTimeMillis())-start)/1000.0);

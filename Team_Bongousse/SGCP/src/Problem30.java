@@ -33,6 +33,8 @@ public class Problem30 {
 
 				fireBFS();
 				BFS(0,0);
+				
+				input.close();
 			}
 		}catch (FileNotFoundException e) { e.printStackTrace();}
 	}
