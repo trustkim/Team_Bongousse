@@ -6,17 +6,14 @@ import java.io.FileWriter;
 public class InputGenerator {
 	public static void main(String [] args) {
 		try{
-			FileWriter fw = new FileWriter(new File("input32.txt"));
-			fw.append("1000 0 1 1 998 999 0\n");
+			FileWriter fw = new FileWriter(new File("input34.txt"));
+			fw.append("1000 1000\n");
 			for(int i=0;i<1000;i++) {
-				for(int j=0;j<1000;j++)
-					fw.append("0 ");
-				fw.append("\n");
-			}
-			fw.append("1000 0 1 1 998 999 0\n");
-			for(int i=0;i<1000;i++) {
-				for(int j=0;j<1000;j++)
-					fw.append("1 ");
+				for(int j=0;j<1000;j++){
+					if(i>0&&i<1000-1&&j>0&&j<1000-1) {
+						fw.append("1 ");
+					}else fw.append("0 ");
+				}
 				fw.append("\n");
 			}
 			fw.close();
