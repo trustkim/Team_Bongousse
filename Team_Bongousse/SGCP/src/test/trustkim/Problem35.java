@@ -21,6 +21,7 @@ public class Problem35 {
 	private static int[] offsetY = {0, 1, 0, -1};
 	private static int gridN;
 	private static int gridM;
+	private static int[][] grid;
 	private static int[][] turnCount;
 	private static final int MAX = 999999999;
 	
@@ -48,14 +49,14 @@ public class Problem35 {
 				gridN = x_hs.size(); gridM = y_hs.size();
 				Object[] xs = x_hs.toArray(); Arrays.sort(xs);
 				Object[] ys = y_hs.toArray(); Arrays.sort(ys);
-				System.out.print("x좌표들: ");
-				for(int i=0;i<gridN;i++)
-					System.out.print(xs[i]+" ");
-				System.out.println();
-				System.out.print("y좌표들: ");
-				for(int i=0;i<gridM;i++)
-					System.out.print(ys[i]+" ");
-				System.out.println();
+//				System.out.print("x좌표들: ");
+//				for(int i=0;i<gridN;i++)
+//					System.out.print(xs[i]+" ");
+//				System.out.println();
+//				System.out.print("y좌표들: ");
+//				for(int i=0;i<gridM;i++)
+//					System.out.print(ys[i]+" ");
+//				System.out.println();
 				// change to grid
 				init = changeToGrid(init,xs,ys);
 				dest = changeToGrid(dest,xs,ys);
@@ -65,25 +66,31 @@ public class Problem35 {
 					}
 				
 				// make turnCount grid
+				grid = new int[gridN][gridM];
 				turnCount = new int[gridN][gridM];
 				for(int i=0;i<gridN;i++)
-					for(int j=0;j<gridM;j++)
+					for(int j=0;j<gridM;j++) {
+						grid[i][j] = 0;
 						turnCount[i][j] = MAX;
+					}
 				for(int i=0;i<N;i++){
 					Cell cur = new Cell(points[i][0].x, points[i][0].y);
 					Cell next;
 					for(int j=1;j<=points[i].length;j++) {
-						turnCount[cur.x][cur.y] = -1;
+						grid[cur.x][cur.y] = 1;
+						//turnCount[cur.x][cur.y] = -1;
 						if(j!=points[i].length)
 							next = new Cell(points[i][j].x, points[i][j].y);
 						else next = new Cell(points[i][0].x, points[i][0].y);
 						if(cur.x==next.x) {	// 시계방향으로 수평 이동 하였다.
 							for(int k=cur.y;k!=next.y;k=k+((next.y-cur.y)/Math.abs(next.y-cur.y))) {
-								turnCount[cur.x][k] = -1;
+								grid[cur.x][k] = 1;
+								//turnCount[cur.x][k] = -1;
 							}
 						}else if(cur.y==next.y) {	// 시계방향으로 수직 이동하였다.
 							for(int k=cur.x;k!=next.x;k=k+((next.x-cur.x)/Math.abs(next.x-cur.x))) {
-								turnCount[k][cur.y] = -1;
+								grid[k][cur.y] = 1;
+//								turnCount[k][cur.y] = -1;
 							}
 						}
 						cur = next;
@@ -91,11 +98,13 @@ public class Problem35 {
 				}
 				turnCount[init.x][init.y] = 0;
 				
-				for(int i=0;i<gridN;i++) {
-					for(int j=0;j<gridM;j++)
-						System.out.print((turnCount[i][j]<0?1:turnCount[i][j]==MAX?"X":turnCount[i][j])+" ");
-					System.out.println();
-				}
+//				for(int i=0;i<gridN;i++) {
+//					for(int j=0;j<gridM;j++) {
+//						System.out.print(grid[i][j]+" ");
+////						System.out.print((turnCount[i][j]<0?1:turnCount[i][j]==MAX?"X":turnCount[i][j])+" ");
+//					}
+//					System.out.println();
+//				}
 
 				turnBFS(init, dest);
 			}
@@ -124,7 +133,7 @@ public class Problem35 {
 			for(int d=0; d<4; d++) {
 				next = new Cell(cell.x+offsetX[d], cell.y+offsetY[d]);
 
-				while(next.valid() && turnCount[next.x][next.y]>0) {	// 범위와 장애물인지 검사
+				while(next.valid() && grid[next.x][next.y]!=1) {	// 범위와 장애물인지 검사
 					if(turnCount[next.x][next.y]==MAX) {			//  첫 방문이면 인큐
 						if(next.x==dest.x && next.y==dest.y) {
 							System.out.println(t);
@@ -135,6 +144,9 @@ public class Problem35 {
 						turnCount[next.x][next.y] = t+1;
 					}
 					next.x+=offsetX[d]; next.y+=offsetY[d];				// 첫 방문 아니면 같은 방향으로 계속 진행
+					if(next.valid()&&grid[next.x][next.y]==1) {		// 만약 범위 안의 장애물을 만나면(직교 다각형의 한 변)
+						//System.out.println("! "+next.x+", "+next.y);
+					}
 				}
 			}
 		}
