@@ -70,8 +70,23 @@ public class Problem35 {
 					for(int j=0;j<gridM;j++)
 						turnCount[i][j] = MAX;
 				for(int i=0;i<N;i++){
-					for(int j=0;j<points[i].length;j++) {
-						turnCount[points[i][j].x][points[i][j].y] = -1;
+					Cell cur = new Cell(points[i][0].x, points[i][0].y);
+					Cell next;
+					for(int j=1;j<=points[i].length;j++) {
+						turnCount[cur.x][cur.y] = -1;
+						if(j!=points[i].length)
+							next = new Cell(points[i][j].x, points[i][j].y);
+						else next = new Cell(points[i][0].x, points[i][0].y);
+						if(cur.x==next.x) {	// 시계방향으로 수평 이동 하였다.
+							for(int k=cur.y;k!=next.y;k=k+((next.y-cur.y)/Math.abs(next.y-cur.y))) {
+								turnCount[cur.x][k] = -1;
+							}
+						}else if(cur.y==next.y) {	// 시계방향으로 수직 이동하였다.
+							for(int k=cur.x;k!=next.x;k=k+((next.x-cur.x)/Math.abs(next.x-cur.x))) {
+								turnCount[k][cur.y] = -1;
+							}
+						}
+						cur = next;
 					}
 				}
 				turnCount[init.x][init.y] = 0;
