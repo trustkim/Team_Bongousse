@@ -1,5 +1,3 @@
-package test.trustkim;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -102,10 +100,10 @@ public class Problem41
 			while(st!=null) {	// ld의 인접한 모든 노드 st에 ld의 값을 더함.
 				int storeIndex = hsm.get(st.name);
 				int opcode = regfile[storeIndex][0];
-				if(opcode!=DIF)	// 뺄셈이 아니면 변수 테이블에서 값을 불러 와 더함.
+				if(opcode!=DIF)		// 뺄셈이 아니면 변수 테이블에서 값을 불러 와 더함.
 				{
 					regfile[storeIndex][1] += regfile[loadIndex][1];
-					if(opcode==AVG)
+					if(opcode==AVG)	// 평균 구하기
 					{
 						if(regfile[storeIndex][2]<indegree[storeIndex])
 							regfile[storeIndex][2]++;
@@ -143,11 +141,7 @@ public class Problem41
 		String[] tokens;
 		for(int i=1;i<=N;i++) {		// N 줄을 읽어 처리
 			tokens = sc.nextLine().split("[ \\=]+");	// 공백 문자, '='으로 토크나이징
-//			for(int j=0;j<tokens.length;j++)
-//				System.out.print(tokens[j]+" ");		// 수식 토크나이징 테스트 출력
-//			System.out.println();
 			int leftValue = trimVar(tokens[0]);			// 이번에 읽은 변수. leftValue 
-			//System.out.println(var);					// 변수 테스트 출력
 			if(!hsm.containsKey(leftValue))				// hsm에 없으면 추가. 혹시 모르니 둠. 사실 이 문제에선 필요 없음.
 				hsm.put(leftValue, id++);				// 식 순서 대로 식별자를 부여함
 			int leftIndex = hsm.get(leftValue);			// incoming
@@ -189,7 +183,6 @@ public class Problem41
 							if(j==DIFEE)
 								regfile[leftIndex][1] = num;
 							else regfile[leftIndex][1] -= num;
-							//regfile[leftIndex][2] += j;	// DIFEE면 +2, DIFER면 +3, 둘다 차면 5
 						}else
 							regfile[leftIndex][1] += num;
 					}
@@ -207,14 +200,11 @@ public class Problem41
 			for(int T=sc.nextInt();T>0;T--)
 			{
 				test.readFile(sc);	// file read complete
-				test.Print();
-				if(test.topologicalSort2())
+				if(test.topologicalSort2())				// 위상 정렬
 				{
-					test.PrintTopol();
-					System.out.println(test.calc());
-					test.Print();
+					System.out.println(test.calc());	// 위상 정렬 순으로 연산을 수행하여 결과를 출력함.
 				}else
-					System.out.println("Impossible");
+					System.out.println("Impossible");	// DAG가 아님
 			}
 			sc.close();
 		}
@@ -223,37 +213,5 @@ public class Problem41
 			System.out.println("file not found...");
 		}		
 	}
-	
-	private void Print()
-	{
-		System.out.println("id\tvar(indeg,outdeg)\tatt");
-		for(int i=1;i<adjList.length;i++)
-		{
-			Node p = adjList[i];
-			System.out.print(hsm.get(p.name)+"\t"+p.name+"("+indegree[hsm.get(p.name)]+", "+outdegree[hsm.get(p.name)]+")\t\t\t"+regfile[hsm.get(p.name)][0]+"\t");
-			if(p!=null) p=p.next;
-			while(p!=null)
-			{
-				System.out.print(p.name+"\t");
-				p=p.next;
-			}
-			System.out.println();
-		}
-		System.out.println("regfile: ");
-		for(int i=1;i<regfile.length;i++)
-		{
-			System.out.println(adjList[i].name+": "+regfile[i][1]);
-		}
-	}
-	private void PrintTopol()
-	{
-		Node p = R;
-		System.out.print("result of topologicalSort2: ");
-		while(p!=null)
-		{
-			System.out.print(p.name+" ");
-			p=p.next;
-		}
-		System.out.println();
-	}
+
 }
