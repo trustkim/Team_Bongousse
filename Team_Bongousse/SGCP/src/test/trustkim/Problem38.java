@@ -50,12 +50,12 @@ public class Problem38 {
 			v=new int[2];
 			v[0]=v1; v[1]=v2;
 		}
-//		Edge(Integer[] v)
-//		{
-//			this.v = new int[2];
-//			this.v[0] = v[0];
-//			this.v[1] = v[1];
-//		}
+		Edge(Integer[] v)
+		{
+			this.v = new int[2];
+			this.v[0] = v[0];
+			this.v[1] = v[1];
+		}
 		
 		private int[] findOPoint(Edge other)
 		{
@@ -114,11 +114,23 @@ public class Problem38 {
 	private Node[] adjList;		// 그래프를 표현한 인접 리스트. 정점의 id로만 표현
 	private Vertex[] vertices;	// 모든 정점의 좌표 테이블
 	//private HashMap<Edge, Integer[]> edges;		// 모든 에지의 맵. 생각대로 잘 안되었다.
+	private boolean[][] visited;	// 지나온 에지를 체크하는 배열
 	
 	// find the face
 	private void findFace(int start, int end)
 	{
-		;
+		visited = new boolean[N][N];	// 어쩔 수 없이 인접 행렬로...
+		int cnt=0;	// 지나온 
+		System.out.println(start+", "+end);
+		int u = start;				// 초기에는 시작 점
+		Node p = adjList[start];	// 시작 에지
+		while(p.index==start)		// 시작 점으로 돌아 올 때 까지 인접 에지를 방문
+		{
+			int v = p.index;
+			if(!visited[u][v])		// 방문 안했던 에지면
+				p=adjList[p.index];	// 인접 에지로 진행
+		}
+		
 	}
 	// detect the outer face
 	private int findMinX()
@@ -135,16 +147,33 @@ public class Problem38 {
 		}
 		return minIndex;
 	}
-	private void outLine()
+	private void detectOuterFace()
 	{
 		// 가장 왼쪽 정점(x좌표가 최소인 정점)을 찾는다.
 		int start = findMinX();
 		// 기울기가 최대인 에지를 찾는다. 즉 각정렬 했을 때 가장 먼저 오는 에지.
 		int end = adjList[start].index;
 		// 그 에지로 시작하는 face를 찾는다.
-		System.out.println(start+", "+end);
 		findFace(start,end);
+		System.out.println("found the Outer face");
 	}
+	
+	private void makeCircularList()
+	{
+		for(int i=0;i<N;i++)
+		{
+			Node p = adjList[i];
+			Node pre = null;
+			while(p!=null)
+			{
+				pre = p;
+				p=p.next;
+			}
+			pre.next = adjList[i];
+			
+		}
+	}
+	
 	// Clockwise Angular Sort
 	private int getAddIndex(int index, int[] keys)
 	{
@@ -254,7 +283,8 @@ public class Problem38 {
 				//theApp.adjPrint();	// test print
 				theApp.rebuildAdjList();// 모든 정점의 인접한 에지에 대하여 각정렬 수행하여 새 인접 리스트를 만든다
 				theApp.adjPrint();
-				theApp.outLine();	// 아우터 페이스를 얻는다.
+				theApp.makeCircularList();
+				theApp.detectOuterFace();	// 아우터 페이스를 얻는다.
 				// 
 			}
 			sc.close();
