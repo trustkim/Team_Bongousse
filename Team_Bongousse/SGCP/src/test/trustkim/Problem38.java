@@ -3,7 +3,7 @@ package test.trustkim;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.Scanner;
 
 public class Problem38 {
@@ -44,18 +44,18 @@ public class Problem38 {
 	{
 		//int index;
 		int[] v;
-//		Edge(int v1, int v2)
-//		{
-//			//this.index=index;
-//			v=new int[2];
-//			v[0]=v1; v[1]=v2;
-//		}
-		Edge(Integer[] v)
+		Edge(int v1, int v2)
 		{
-			this.v = new int[2];
-			this.v[0] = v[0];
-			this.v[1] = v[1];
+			//this.index=index;
+			v=new int[2];
+			v[0]=v1; v[1]=v2;
 		}
+//		Edge(Integer[] v)
+//		{
+//			this.v = new int[2];
+//			this.v[0] = v[0];
+//			this.v[1] = v[1];
+//		}
 		
 		private int[] findOPoint(Edge other)
 		{
@@ -113,9 +113,38 @@ public class Problem38 {
 	
 	private Node[] adjList;		// 그래프를 표현한 인접 리스트. 정점의 id로만 표현
 	private Vertex[] vertices;	// 모든 정점의 좌표 테이블
-	private HashMap<Edge, Integer[]> edges;		// 모든 에지의 맵
+	//private HashMap<Edge, Integer[]> edges;		// 모든 에지의 맵. 생각대로 잘 안되었다.
 	
-
+	// find the face
+	private void findFace(int start, int end)
+	{
+		;
+	}
+	// detect the outer face
+	private int findMinX()
+	{
+		int minX=-1;
+		int minIndex=-1;
+		for(int i=0;i<N;i++)
+		{
+			if(minX==-1 || minX>vertices[i].x)
+			{
+				minX=vertices[i].x;
+				minIndex=i;
+			}
+		}
+		return minIndex;
+	}
+	private void outLine()
+	{
+		// 가장 왼쪽 정점(x좌표가 최소인 정점)을 찾는다.
+		int start = findMinX();
+		// 기울기가 최대인 에지를 찾는다. 즉 각정렬 했을 때 가장 먼저 오는 에지.
+		int end = adjList[start].index;
+		// 그 에지로 시작하는 face를 찾는다.
+		System.out.println(start+", "+end);
+		findFace(start,end);
+	}
 	// Clockwise Angular Sort
 	private int getAddIndex(int index, int[] keys)
 	{
@@ -131,7 +160,8 @@ public class Problem38 {
 		int edgeIndex = 0;
 		while(p!=null)
 		{
-			tempEdges[edgeIndex++] = new Edge(getKeys(index,p.index));
+			//tempEdges[edgeIndex++] = new Edge(getKeys(index,p.index));
+			tempEdges[edgeIndex++] = new Edge(index,p.index);
 			p=p.next;	// 한 연결 리스트 순회
 		}
 //		System.out.println("\tBefore Sorting");
@@ -173,7 +203,7 @@ public class Problem38 {
 	{
 		vertices = new Vertex[N];	// 전체 정점 정보만 저장 하는 배열
 		adjList = new Node[N];		// 그래프를 표현하는 인접리스트
-		edges = new HashMap<Edge, Integer[]>();
+		//edges = new HashMap<Edge, Integer[]>();
 	}
 	private Integer[] getKeys(int u, int v)
 	{
@@ -205,11 +235,11 @@ public class Problem38 {
 				int v = sc.nextInt()-1;
 				add(index,v);
 				vertices[index].outdegree++;
-				Integer[] keys = getKeys(index,v);
-				if(!edges.containsKey(keys))
-				{
-					edges.put(new Edge(keys), keys);
-				}
+//				Integer[] keys = getKeys(index,v);
+//				if(!edges.containsKey(keys))
+//				{
+//					edges.put(new Edge(keys), keys);
+//				}
 			}
 			
 		}
@@ -224,7 +254,7 @@ public class Problem38 {
 				//theApp.adjPrint();	// test print
 				theApp.rebuildAdjList();// 모든 정점의 인접한 에지에 대하여 각정렬 수행하여 새 인접 리스트를 만든다
 				theApp.adjPrint();
-				// 아우터 페이스를 얻는다.
+				theApp.outLine();	// 아우터 페이스를 얻는다.
 				// 
 			}
 			sc.close();
