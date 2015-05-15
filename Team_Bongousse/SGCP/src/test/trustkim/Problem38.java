@@ -3,7 +3,7 @@ package test.trustkim;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
-//import java.util.HashMap;
+//import java.util.HashMap;	// 좋은 아이디어는 아닌듯.
 import java.util.Scanner;
 
 public class Problem38 {
@@ -118,7 +118,7 @@ public class Problem38 {
 	
 	// find the face
 	private void findFace(int start, int end)
-	{
+	{	// 한 페이스를 찾을 때까지 반복하는 함수. start에서 출발해 end로 끝나는 에지를 시작으로 페이스를 순회한다?
 		visited = new boolean[N][N];	// 어쩔 수 없이 인접 행렬로...
 		int cnt=0;	// 지나온 
 		System.out.println(start+", "+end);
