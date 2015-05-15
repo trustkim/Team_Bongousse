@@ -157,20 +157,40 @@ public class Problem38 {
 		int end = adjList[start].index;
 		// 그 에지로 시작하는 face를 찾는다.
 		//findFace(start,end);
-		int u = start;
-		Node p = adjList[start];	// 현재 방문하고 있는 인접리스트의 인덱스 노드
-		while(p.index!=start)
-		{
-			int v = p.index;
-			if(!visited[u][v])
+		int u = start;			// 최초 방물할 에지의 시작점
+		int v = end;			// 최초 방문할 에지의 끝점
+		Node p = adjList[v];	// 최초 방문할 에지.
+		while(p!=null)
+		{		
+			if(!visited[u][v])	// 이 방문할 에지가 방문하지 않았을 때
 			{
-				visited[u][v] = true;
-				System.out.println(u+" -> "+v);
-				p = adjList[v];
+				visited[u][v] = true;	// 방문함을 체크
+				System.out.println(u+" -> "+v);	// 확인차 출력
+				if(v==start) {		// 현재 방문할 에지의 끝점이 face를 찾기 시작한 에지의 시작점이 되면 한 face를 찾은 것임. 이 때가 bace case
+					System.out.println("found the Outer face");
+					return;
+				}
+				Node pre = null; // p의 바로 앞 노드를 따라가는 프리디세서
+				while(pre==null || (pre!=null && pre.index!=u))
+				{
+					pre = p;
+					p = p.next;
+					if(p==null)	// circular하게 진행해야 하므로 다시 리스트의 맨 처음으로 돌아간다
+					{
+						p=adjList[v];
+					}
+				}
 				u = v;
+				v = p.index;
+				p = adjList[v];
+//				
+//				
+//				p = adjList[v];
 			}
+			else
+				p=p.next;
 		}
-		System.out.println("found the Outer face");
+		
 	}
 	
 	private void makeCircularList()
@@ -298,7 +318,7 @@ public class Problem38 {
 				//theApp.adjPrint();	// test print
 				theApp.rebuildAdjList();// 모든 정점의 인접한 에지에 대하여 각정렬 수행하여 새 인접 리스트를 만든다
 				theApp.adjPrint();
-				theApp.makeCircularList();
+				//theApp.makeCircularList();
 				theApp.detectOuterFace();	// 아우터 페이스를 얻는다.
 				// 
 			}
