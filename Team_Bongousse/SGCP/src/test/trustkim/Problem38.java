@@ -119,7 +119,7 @@ public class Problem38 {
 	// find the face
 	private void findFace(int start, int end)
 	{	// 한 페이스를 찾을 때까지 반복하는 함수. start에서 출발해 end로 끝나는 에지를 시작으로 페이스를 순회한다?
-		visited = new boolean[N][N];	// 어쩔 수 없이 인접 행렬로...
+		
 		int cnt=0;	// 지나온 
 		System.out.println(start+", "+end);
 		int u = start;				// 초기에는 시작 점
@@ -149,12 +149,27 @@ public class Problem38 {
 	}
 	private void detectOuterFace()
 	{
+		visited = new boolean[N][N];	// 어쩔 수 없이 인접 행렬로...
+		
 		// 가장 왼쪽 정점(x좌표가 최소인 정점)을 찾는다.
 		int start = findMinX();
 		// 기울기가 최대인 에지를 찾는다. 즉 각정렬 했을 때 가장 먼저 오는 에지.
 		int end = adjList[start].index;
 		// 그 에지로 시작하는 face를 찾는다.
-		findFace(start,end);
+		//findFace(start,end);
+		int u = start;
+		Node p = adjList[start];	// 현재 방문하고 있는 인접리스트의 인덱스 노드
+		while(p.index!=start)
+		{
+			int v = p.index;
+			if(!visited[u][v])
+			{
+				visited[u][v] = true;
+				System.out.println(u+" -> "+v);
+				p = adjList[v];
+				u = v;
+			}
+		}
 		System.out.println("found the Outer face");
 	}
 	
