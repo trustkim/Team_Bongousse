@@ -116,21 +116,63 @@ public class Problem38 {
 	//private HashMap<Edge, Integer[]> edges;		// 모든 에지의 맵. 생각대로 잘 안되었다.
 	private boolean[][] visited;	// 지나온 에지를 체크하는 배열
 	
-	// find the face
-	private void findFace(int start, int end)
-	{	// 한 페이스를 찾을 때까지 반복하는 함수. start에서 출발해 end로 끝나는 에지를 시작으로 페이스를 순회한다?
-		
-		int cnt=0;	// 지나온 
-		System.out.println(start+", "+end);
-		int u = start;				// 초기에는 시작 점
-		Node p = adjList[start];	// 시작 에지
-		while(p.index==start)		// 시작 점으로 돌아 올 때 까지 인접 에지를 방문
+	// find all inner face
+	private void findAllFace()
+	{	// 아우터 페이스를 제외한 모든 내부 페이스를 찾아 차수가 K인 페이스를 카운트 한다.
+		//System.out.println("inner face detection!");
+		int cnt=0;
+		for(int i=0;i<N;i++)
 		{
-			int v = p.index;
-			if(!visited[u][v])		// 방문 안했던 에지면
-				p=adjList[p.index];	// 인접 에지로 진행
+			Node p = adjList[i];
+			while(p!=null)
+			{
+				int start = i; int end = p.index;
+				if(K==findFace(start,end))
+				{
+					cnt++;
+				}
+				p = p.next;
+			}
+			
 		}
-		
+		System.out.println(cnt);
+	}
+	// find a new face
+	private int findFace(int start, int end)
+	{	// 한 페이스를 찾을 때까지 반복하는 함수. start에서 출발해 end로 끝나는 에지를 시작으로 페이스를 순회한다?
+		int cnt=0;
+		int u = start;			// 최초 방물할 에지의 시작점
+		int v = end;			// 최초 방문할 에지의 끝점
+		Node p = adjList[v];	// 최초 방문할 에지.
+		while(p!=null)
+		{		
+			if(!visited[u][v])	// 이 방문할 에지가 방문하지 않았을 때
+			{
+				visited[u][v] = true;	// 방문함을 체크
+				//System.out.println(u+" -> "+v);	// 확인차 출력
+				cnt++;
+				if(v==start) {		// 현재 방문할 에지의 끝점이 face를 찾기 시작한 에지의 시작점이 되면 한 face를 찾은 것임. 이 때가 bace case
+					//System.out.println("found a new face");
+					return cnt;
+				}
+				Node pre = null; // p의 바로 앞 노드를 따라가는 프리디세서
+				while(pre==null || (pre!=null && pre.index!=u))
+				{
+					pre = p;
+					p = p.next;
+					if(p==null)	// circular하게 진행해야 하므로 다시 리스트의 맨 처음으로 돌아간다
+					{
+						p=adjList[v];
+					}
+				}
+				u = v;
+				v = p.index;
+				p = adjList[v];
+			}
+			else
+				p=p.next;
+		}
+		return cnt;
 	}
 	// detect the outer face
 	private int findMinX()
@@ -148,66 +190,31 @@ public class Problem38 {
 		return minIndex;
 	}
 	private void detectOuterFace()
-	{
-		visited = new boolean[N][N];	// 어쩔 수 없이 인접 행렬로...
-		
+	{		
 		// 가장 왼쪽 정점(x좌표가 최소인 정점)을 찾는다.
 		int start = findMinX();
 		// 기울기가 최대인 에지를 찾는다. 즉 각정렬 했을 때 가장 먼저 오는 에지.
 		int end = adjList[start].index;
 		// 그 에지로 시작하는 face를 찾는다.
-		//findFace(start,end);
-		int u = start;			// 최초 방물할 에지의 시작점
-		int v = end;			// 최초 방문할 에지의 끝점
-		Node p = adjList[v];	// 최초 방문할 에지.
-		while(p!=null)
-		{		
-			if(!visited[u][v])	// 이 방문할 에지가 방문하지 않았을 때
-			{
-				visited[u][v] = true;	// 방문함을 체크
-				System.out.println(u+" -> "+v);	// 확인차 출력
-				if(v==start) {		// 현재 방문할 에지의 끝점이 face를 찾기 시작한 에지의 시작점이 되면 한 face를 찾은 것임. 이 때가 bace case
-					System.out.println("found the Outer face");
-					return;
-				}
-				Node pre = null; // p의 바로 앞 노드를 따라가는 프리디세서
-				while(pre==null || (pre!=null && pre.index!=u))
-				{
-					pre = p;
-					p = p.next;
-					if(p==null)	// circular하게 진행해야 하므로 다시 리스트의 맨 처음으로 돌아간다
-					{
-						p=adjList[v];
-					}
-				}
-				u = v;
-				v = p.index;
-				p = adjList[v];
-//				
-//				
-//				p = adjList[v];
-			}
-			else
-				p=p.next;
-		}
-		
+		findFace(start,end);
+		//System.out.println("found the Outer face");
 	}
 	
-	private void makeCircularList()
-	{
-		for(int i=0;i<N;i++)
-		{
-			Node p = adjList[i];
-			Node pre = null;
-			while(p!=null)
-			{
-				pre = p;
-				p=p.next;
-			}
-			pre.next = adjList[i];
-			
-		}
-	}
+//	private void makeCircularList()	// 인접 리스트를 영구적으로 circular하게 하면 이후 출력 등의 용도로 만들어 둔 다른 함수를 다 고쳐야 한다...
+//	{
+//		for(int i=0;i<N;i++)
+//		{
+//			Node p = adjList[i];
+//			Node pre = null;
+//			while(p!=null)
+//			{
+//				pre = p;
+//				p=p.next;
+//			}
+//			pre.next = adjList[i];
+//			
+//		}
+//	}
 	
 	// Clockwise Angular Sort
 	private int getAddIndex(int index, int[] keys)
@@ -267,6 +274,7 @@ public class Problem38 {
 	{
 		vertices = new Vertex[N];	// 전체 정점 정보만 저장 하는 배열
 		adjList = new Node[N];		// 그래프를 표현하는 인접리스트
+		visited = new boolean[N][N];// 어쩔 수 없이 인접 행렬로...	N이 결정되고 가까운 곳에서 생성해 줬다.
 		//edges = new HashMap<Edge, Integer[]>();
 	}
 	private Integer[] getKeys(int u, int v)
@@ -314,12 +322,13 @@ public class Problem38 {
 			Scanner sc = new Scanner(new File("input38.txt"));
 			for(int T=sc.nextInt();T>0;T--) {	// T번 반복
 				theApp.readFile(sc);	// file read complete
-				theApp.pointsPrint();	// test print
+				//theApp.pointsPrint();	// test print
 				//theApp.adjPrint();	// test print
 				theApp.rebuildAdjList();// 모든 정점의 인접한 에지에 대하여 각정렬 수행하여 새 인접 리스트를 만든다
-				theApp.adjPrint();
+				//theApp.adjPrint();
 				//theApp.makeCircularList();
 				theApp.detectOuterFace();	// 아우터 페이스를 얻는다.
+				theApp.findAllFace();
 				// 
 			}
 			sc.close();
