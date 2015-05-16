@@ -50,12 +50,12 @@ public class Problem38 {
 			v=new int[2];
 			v[0]=v1; v[1]=v2;
 		}
-		Edge(Integer[] v)
-		{
-			this.v = new int[2];
-			this.v[0] = v[0];
-			this.v[1] = v[1];
-		}
+//		Edge(Integer[] v)
+//		{
+//			this.v = new int[2];
+//			this.v[0] = v[0];
+//			this.v[1] = v[1];
+//		}
 		
 		private int[] findOPoint(Edge other)
 		{
@@ -277,20 +277,20 @@ public class Problem38 {
 		visited = new boolean[N][N];// 어쩔 수 없이 인접 행렬로...	N이 결정되고 가까운 곳에서 생성해 줬다.
 		//edges = new HashMap<Edge, Integer[]>();
 	}
-	private Integer[] getKeys(int u, int v)
-	{
-		int temp=u;
-		if(temp!=v)
-		{
-			u = Math.min(temp, v);
-			v = Math.max(temp, v);	
-		}
-		Integer[] key = new Integer[2];
-		key[0] = u;
-		key[1] = v;
-		
-		return key;
-	}
+//	private Integer[] getKeys(int u, int v)
+//	{
+//		int temp=u;
+//		if(temp!=v)
+//		{
+//			u = Math.min(temp, v);
+//			v = Math.max(temp, v);	
+//		}
+//		Integer[] key = new Integer[2];
+//		key[0] = u;
+//		key[1] = v;
+//		
+//		return key;
+//	}
 	private void readFile(Scanner sc)
 	{
 		N = sc.nextInt();
@@ -334,27 +334,27 @@ public class Problem38 {
 			sc.close();
 		}catch(FileNotFoundException e) {System.out.println("file not found...");}
 	}
-	private void pointsPrint()
-	{
-		System.out.println("points table:");
-		for(int i=0;i<N;i++)
-		{
-			System.out.println("["+(i+1)+"]: ("+vertices[i].x+", "+vertices[i].y+")");
-		}
-	}
-	private void adjPrint()
-	{
-		System.out.println("adjList:");
-		for(int i=0;i<N;i++)
-		{
-			Node p = adjList[i];
-			System.out.print("["+(i+1)+"]: ");
-			//p = p.next;
-			while(p!=null) {
-				System.out.print("["+(p.index+1)+"], ");
-				p = p.next;
-			}
-			System.out.println();
-		}
-	}
+//	private void pointsPrint()
+//	{
+//		System.out.println("points table:");
+//		for(int i=0;i<N;i++)
+//		{
+//			System.out.println("["+(i+1)+"]: ("+vertices[i].x+", "+vertices[i].y+")");
+//		}
+//	}
+//	private void adjPrint()
+//	{
+//		System.out.println("adjList:");
+//		for(int i=0;i<N;i++)
+//		{
+//			Node p = adjList[i];
+//			System.out.print("["+(i+1)+"]: ");
+//			//p = p.next;
+//			while(p!=null) {
+//				System.out.print("["+(p.index+1)+"], ");
+//				p = p.next;
+//			}
+//			System.out.println();
+//		}
+//	}
 }
