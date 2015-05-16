@@ -1,285 +1,306 @@
 package test.trustkim;
 
-import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
-
+import java.util.Scanner;
+import java.util.Vector;
 
 public class Problem42 {
-	final static double pi = 3.1415926;
-	
-	private Node[] nodes;
-	private int N;
-	private int px, py;				// 탈출 시작점
-	private boolean[][] visited;	// face 탐지 할 때 방문 에지 체크
-	private int[][] linesFace;		// 에지가 어느 페이스에 속하는지 저장하는 테이블
-	// 방향 상관 없는 에지 인덱스로 만든 에지 테이블 추가 바람
-
-	private class Node{
-		int x, y, index;			// index는 Node타입 배열에 쓰일 인덱스
-		int indegree = 0;			// 현재 노드의 indegree
-		int outCount = 0;			//outdegree 연결리스트의 수
-		Node outdegree = null;		// next. 현재 노드에 인접한 노드
-		Node(int index){ this.index = index; }
-		Node(int index, int x, int y){ 
-			this.index = index; 
-			this.x = x; 
-			this.y = y; 
-		}
-	}
-
-	private class Edge implements Comparable<Edge>{	//어떤 근원노드로부터 뻗쳐나가는 엣지
-		int tonode;									//이 엣지가 향하는 노드의 배열인덱스
-		double angle;								//이 엣지가 근원노드의 상향법선과 이루는 각도
-		Edge(double angle, int tonode){ 
-			this.angle = angle; 
-			this.tonode = tonode;
-		}
-		public int compareTo(Edge other){			//angle에 따라 오름차순으로 정렬됨
-			if(angle < other.angle){ return -1; }
-			else if(angle == other.angle){ return 0; }
-			else { return 1; }
-		}
-	}
-	
-	private static class MyPoint{
-		int x, y;
-		MyPoint(int x, int y){
-			this.x = x;
-			this.y = y;
-		}
-	}
-	private static class Line {	// 두 점을 잇는 선분
-        private MyPoint u, v;
-        public Line(int x1, int y1, int x2, int y2) {
-            u = new MyPoint(x1, y1);
-            v = new MyPoint(x2, y2);
-        }
-
-        public Line(MyPoint p, MyPoint q) {
-            u = p;
-            v = q;
-        }	// 두 점을 잇는 선분을 생성
-
-        public boolean intersects(Line other) {
-            int result1 = (other.v.x-other.u.x)*(u.y-other.u.y) - (u.x-other.u.x)*(other.v.y-other.u.y);
-            int result2 = (other.v.x-other.u.x)*(v.y-other.u.y) - (v.x-other.u.x)*(other.v.y-other.u.y);
-            if (result1*result2 >= 0)
-                return false;
-
-            result1 = (v.x-u.x)*(other.u.y-u.y) - (other.u.x-u.x)*(v.y-u.y);
-            result2 = (v.x-u.x)*(other.v.y-u.y) - (other.v.x-u.x)*(v.y-u.y);
-            if (result1*result2 >= 0)
-                return false;
-            return true;
-        }	// 두 선분이 교차하는지 여부를 반환
-    }
-	
-	
-	private class Face{
-		int faceIndex;
-	}
-
-
-	private void readInput(String str){
-		try{			
-			Scanner input = new Scanner(new File(str));
-			for(int T = input.nextInt(); T > 0; T--){
-				N = input.nextInt();
-				nodes = new Node[N];
-				px = input.nextInt(); py = input.nextInt();
-				visited = new boolean[N][N];	// 페이스 탐지 할 때 쓰므로 그 때 초기화 해주는 것도 좋을 것 같다.
-				linesFace = new int[N][N];		//-1:바깥영역, 1이상:face인덱스
-				
-				//일단 input읽고 좌표, outdegree정보를 담는다
-				for(int i = 0; i < N; i++){
-					nodes[i] = new Node(input.nextInt()-1, input.nextInt(), input.nextInt());
-					nodes[i].outCount = input.nextInt();
-					for(int k = nodes[i].outCount; k > 0; k--){
-						Node newnode = new Node(input.nextInt()-1);
-						newnode.outdegree = nodes[i].outdegree;
-						nodes[i].outdegree = newnode;
-					}
-				}
-
-				
-				
-				// <<<이하 outline탐색, face탐색, 내부의 점 찾기 등 실행>>>
-				//......
-				//findOutline();
-				//......
-				
-			}
-			input.close();
-		}catch(FileNotFoundException e){System.out.println("file not found..");}
-	}
-	private double calcAngle(Node a, Node b){
-		if(a.x >= b.x && a.y > b.y){ //좌표평면 우측 상단(1사분면)
-			return (Math.atan((a.x-b.x)/(a.y-b.y))/pi)*180;
-		}
-		else if(a.x > b.x && a.y <= b.y){ //우측 하단(4사분면)
-			return (Math.atan((b.y-a.y)/(a.x-b.x))/pi)*180+90;
-		}
-		else if(a.x <= b.x && a.y < b.y){ //좌측 하단(3사분면)
-			return (Math.atan((b.x-a.x)/(b.y-a.y))/pi)*180+180;
-		}
-		else if(a.x < b.x && a.y >= b.y){ //좌측 상단(2사분면)
-			return (Math.atan((a.y-b.y)/(b.x-a.x))/pi)*180+270;
-		}
-		return 0;
-	}
-	private void AngularSort(){
-		//outdegree에 의한 indegree값 결정 및 outdegree를 각정렬하여 새로 입력
-		for(int j = 0; j < N; j++){
-			Node tmp = nodes[j].outdegree;
-			Edge[] edges = new Edge[nodes[j].outCount];
-			
-			int edgeindex = 0;
-			while(tmp != null){
-				
-				//현재 노드와의 직선이 상향법선과 이루는 각도를 구한다
-				double angle = calcAngle(tmp,nodes[j]);						
-				edges[edgeindex++] = new Edge(angle, tmp.index);	//인접노드들과의 각도 정보를 담는 edges 배열 구성
-				
-				nodes[tmp.index].indegree++;						//인접리스트가 가리키는 노드들의 indegree 증가시키기
-				tmp = tmp.outdegree;
-			}
-			
-			Arrays.sort(edges);		//각도 오름차순(시계방향, CW)으로 정렬
-			
-			nodes[j].outdegree = null;	//기존의 인접리스트 제거
-			//각정렬된 새로운 인접리스트 구성
-			for(int k = edges.length-1; k >= 0; k--){
-				Node newnode = new Node(edges[k].tonode);
-				newnode.outdegree = nodes[j].outdegree;
-				nodes[j].outdegree = newnode;
-			}
-		}
-	}
-	
-	private void findOutline(){		
-		int small_x = nodes[0].x, small_index = 0, preindex = 0;
-		for(int i = 0; i < N; i++){
-			if(small_x > nodes[i].x){
-				small_x = nodes[i].x;
-				small_index = i;
-				preindex = i;
-			}
-		}
-		Node outstart = nodes[nodes[small_index].outdegree.index];
-		visited[small_index][outstart.index] = true;
-		linesFace[small_index][outstart.index] = -1;
-		while(outstart.index != small_index){
-			Node localdeg = outstart.outdegree;
-			while(localdeg.index != preindex){
-				localdeg = localdeg.outdegree;
-				if(localdeg == null){
-					localdeg = outstart;
-				}
-			}			
-			localdeg = localdeg.outdegree;
-			if(localdeg == null){
-				localdeg = outstart.outdegree;
-			}			
-			
-			visited[outstart.index][localdeg.index] = true;
-			linesFace[outstart.index][localdeg.index] = -1;
-						
-			preindex = outstart.index;
-			outstart = nodes[localdeg.index];			
-		}
-	}
-
-	
-	private void findFaces(){
-		int faceCnt = 1;
-		//모든 노드 각각에 대해
-		for(int i = 0; i < N; i++){
-			Node tmp = nodes[i].outdegree;
-			//그 노드의 모든 엣지 각각에 대해
-			while(tmp != null){
-				if(!visited[i][tmp.index]){	//이방향으로의 엣지를 방문하지 않았다면
-					
-					
-					
-					Node local = nodes[tmp.index];
-					int preindex = i;
-					//위의 for문의 근원노드로 되돌아 올 때까지
-					while(local.index != i){
-						Node localocal = local.outdegree;
-						//시계방향으로 가장 인접한 엣지로 가기위해
-						while(localocal.index != preindex){
-							localocal = localocal.outdegree;
-							if(localocal == null){
-								localocal = local.outdegree;
-							}
-						}
-						localocal = localocal.outdegree;
-						if(localocal == null){localocal = local.outdegree;}
-						
-						if(visited[local.index][localocal.index]){
-							System.out.println("duplicated visit..");
-							break;
-						}
-						else{
-							visited[local.index][localocal.index] = true;
-							linesFace[local.index][localocal.index] = faceCnt;
-						}
-						preindex = local.index;
-						local = nodes[localocal.index];
-					}
-					
-					
-					
-					
-				}				
-				tmp = tmp.outdegree;
-			}
-		}
-		
-	}
-	
-	
-//	private void execute(){
-//		Edge[] edges = new Edge[5];
-//		edges[0] = new Edge(5.23, 2);
-//		edges[1] = new Edge(1.45, 1);
-//		edges[2] = new Edge(9.47, 5);
-//		edges[3] = new Edge(6.2, 4);
-//		edges[4] = new Edge(3.21, 9);
-//		Arrays.sort(edges);		
-//		
-//		for(int i = 0; i < 5; i++){
-//			System.out.println(edges[i].angle);
-//		}
-//
-//		System.out.println((Math.atan(1)/pi)*180);
-//	}
-
-
-	public static void main(String[] args){
-		Problem42 pro = new Problem42();
-		pro.readInput("input42.txt");
-		pro.AngularSort();
-		pro.adjPrint();
-		//pro.execute();
-	}
-	
-	private void adjPrint()	// 만들어진 연결 리스트를 출력 해 준다
+	private class Point
 	{
+		protected int x,y;
+//		Point(){x=0;y=0;}
+		Point(int x,int y)
+		{
+			this.x=x; this.y=y;
+		}
+	}
+	private class Edge implements Comparable<Edge>
+	{
+		//int index;
+		int[] v;	// 방향 그래프로 가정 하는 것이 더 간단할 것이다.
+		boolean visited;
+		Edge next;
+		Edge(int v1, int v2)
+		{
+			//this.index=index;
+			v=new int[2];
+			v[0]=v1; v[1]=v2;
+			next = null;
+		}
+//		Edge(Integer[] v)
+//		{
+//			this.v = new int[2];
+//			this.v[0] = v[0];
+//			this.v[1] = v[1];
+//		}
+		private int crossProduct(Point pi, Point pj)
+		{
+			return (pi.x*pj.y-pi.y*pj.x);
+		}
+		/* return negative if q<r, 0 if q=r, positive if q>r */
+		public int compareTo(Edge other)
+		{
+			Point o = points[this.v[0]];
+			Point q = points[this.v[1]];
+			Point r = points[other.v[1]];
+			Point vecter_oq = new Point(q.x-o.x,q.y-o.y);
+			Point vecter_or = new Point(r.x-o.x,r.y-o.y);
+
+			if(vecter_oq.x >= 0 && vecter_or.x < 0) return -1;
+			if(vecter_oq.x <= 0 && vecter_or.x > 0) return 1;
+			//if(vecter_oq.x == 0 && vecter_or.x == 0) ;
+
+			return crossProduct(vecter_oq,vecter_or);
+		}
+	}
+	private class Face
+	{
+		int size;		// 페이스를 이루는 정점 개수
+		Vector<Edge> elements;	// 구성하는 에지
+		Face next;		// 페이스간의 인접 관계를 위해
+		boolean visited;// BFS시 체크할 변수
+		Face()
+		{
+			size=0; elements = new Vector<Edge>(); next=null;
+			visited = false;
+		}
+	}
+	private int N;				// 전체 그래프의 정점 개수
+	private Point startP;;		// 탈출 시작 점
+	
+	private Edge[] adjList;		// 그래프를 표현한 인접 리스트. 정점의 id로만 표현
+	private Point[] points;
+	private int[] outdegree;	// 별도의 outdegree배열
+	private Vector<Face> faces;	// 페이스들의 그래프. findAllFace() 하면서 하나씩 추가해 나갈 거라 벡터로 선언.
+
+	// find all inner face
+	private void findAllFace()
+	{	// 아우터 페이스를 제외한 모든 내부 페이스를 찾아 차수가 K인 페이스를 카운트 한다.
+		//System.out.println("inner face detection!");
+		//int cnt=0;
 		for(int i=0;i<N;i++)
 		{
-			Node p = nodes[i];
-			System.out.print((p.index+1)+": ");
-			if(p!=null) p=p.outdegree;
+			Edge p = adjList[i];
 			while(p!=null)
 			{
-				System.out.print((p.index+1)+" ");
-				p = p.outdegree;
+				int start = i; int end = p.v[1];
+				//int sizeCheck = faces.size();
+				findFace(start,end);
+//				if(sizeCheck!=faces.size())
+//				{
+//					cnt++;	// 총 페이스의 개수
+//				}
+				p = p.next;
 			}
+		}
+//		System.out.println(cnt);
+//		System.out.println(faces.size());
+		facePrint();
+	}
+	// find a new face
+	private void findFace(int start, int end)
+	{	// 한 페이스를 찾을 때까지 반복하는 함수. start에서 출발해 end로 끝나는 에지를 시작으로 페이스를 순회한다?
+		Face temp = new Face();	// 이번에 찾은 페이스는 새로 형성하여 추가한다
+		int cnt=0;
+		int u = start;			// 최초 방물할 에지의 시작점
+		int v = end;			// 최초 방문할 에지의 끝점
+		Edge p = adjList[u];	// 최초 방문할 에지.
+		Edge q = adjList[v];	// 다음에 방문할 에지.
+		while(p!=null)
+		{		
+			if(!p.visited)	// 이 방문할 에지가 방문하지 않았을 때
+			{
+				p.visited=true;	// 방문함을 체크
+				temp.elements.add(p);	// 방문한 에지를 이번에 탐지하는 페이스에 추가
+				//System.out.println(u+" -> "+v);	// 확인차 출력
+				cnt++;
+				if(v==start) {		// 현재 방문할 에지의 끝점이 face를 찾기 시작한 에지의 시작점이 되면 한 face를 찾은 것임. 이 때가 bace case
+					//System.out.println("found a new face");
+					temp.size=cnt;
+					faces.add(temp);
+					return ;	// 페이스 탐지 한 경우
+				}
+				Edge pre = null; // q의 바로 앞 노드를 따라가는 프리디세서
+				while(pre==null || (pre!=null && pre.v[1]!=u))
+				{
+					pre = q;
+					q = q.next;
+					if(q==null)	// circular하게 진행해야 하므로 다시 리스트의 맨 처음으로 돌아간다
+					{
+						q=adjList[v];
+					}
+				}
+				u = v;
+				v = q.v[1];
+				p = q;
+				q = adjList[v];
+			}
+			else
+			{
+				p=p.next;
+				if(p!=null) {
+					q=adjList[p.v[1]];
+					v=p.v[1];
+				}
+				
+			}
+		}
+		return ;	// 페이스 없는 경우
+	}
+	// detect the outer face
+	private int findMinX()
+	{
+		int minX=-1;
+		int minIndex=-1;
+		for(int i=0;i<N;i++)
+		{
+			if(minX==-1 || minX>points[i].x)
+			{
+				minX=points[i].x;
+				minIndex=i;
+			}
+		}
+		return minIndex;
+	}
+	private void detectOuterFace()
+	{		
+		// 가장 왼쪽 정점(x좌표가 최소인 정점)을 찾는다.
+		int start = findMinX();
+		// 기울기가 최대인 에지를 찾는다. 즉 각정렬 했을 때 가장 먼저 오는 에지.
+		int end = adjList[start].v[1];
+		// 그 에지로 시작하는 face를 찾는다.
+		findFace(start,end);
+		//System.out.println("found the Outer face");
+	}
+
+	// Clockwise Angular Sort
+	private void angularSort(int index)
+	{	// 인접 리스트에서 해당 정점 인덱스의 인접한 에지를 시계방향 순으로 각정렬 함
+		//System.out.println(index+":");
+		Edge[] tempEdges = new Edge[outdegree[index]];	// 정렬할 에지의 인덱스의 배열
+		// 원래 인접리스트의 각 노드를 temp의 각 원소로  저장
+		Edge p = adjList[index];
+		int edgeIndex = 0;
+		while(p!=null)
+		{
+			tempEdges[edgeIndex++] = new Edge(index,p.v[1]);
+			p=p.next;	// 한 연결 리스트 순회
+		}
+		//		System.out.println("\tBefore Sorting");
+		//		for(int i=0;i<tempEdges.length;i++)
+		//		{
+		//			System.out.println("\t"+tempEdges[i].v[0]+" <-> "+tempEdges[i].v[1]);
+		//		}
+		Arrays.sort(tempEdges);
+		//		System.out.println("\tAfter Sorting");
+		//		for(int i=0;i<tempEdges.length;i++)
+		//		{
+		//			System.out.println("\t"+tempEdges[i].v[0]+" <-> "+tempEdges[i].v[1]);
+		//		}
+
+		adjList[index] = null;
+		for(int i=tempEdges.length-1;i>=0;i--)
+		{
+			add(index,tempEdges[i].v[1]);
+		}
+	}
+	private void rebuildAdjList()
+	{
+		for(int i=0;i<N;i++)	// 모든 정점에 대하여 수행. N번 반복
+		{
+			angularSort(i);	// 해당 정점의 인접 에지들을 각정렬 함
+		}
+		//System.out.println("rebuildAdjList complete");
+	}
+
+	// 파일 읽고 자료구조 생성
+	private void add(int r, int i)	// 정점 r에 인접한 정점 i를 추가함. 항상 맨 앞에 추가함.
+	{
+		Edge p = new Edge(r,i);
+		p.next = adjList[r];
+		adjList[r] = p;
+	}
+	private void initGraph()
+	{
+		points = new Point[N];		// 전체 정점 정보만 저장 하는 배열
+		adjList = new Edge[N];		// 그래프를 표현하는 인접리스트
+		outdegree = new int[N];		// 별도의 아웃디그리 배열
+		faces = new Vector<Face>();	// 페이스들의 그래프
+	}
+
+	private void readFile(Scanner sc)
+	{
+		N = sc.nextInt();
+		startP = new Point(sc.nextInt(),sc.nextInt()); 
+		initGraph();
+		for(int i=0;i<N;i++)
+		{
+			int index = sc.nextInt()-1;	// 배열 인덱스는 항상 -1 해줘야 함
+			int x=sc.nextInt();
+			int y=sc.nextInt();
+			points[index] = new Point(x,y);
+			for(int j=sc.nextInt();j>0;j--)
+			{
+				int v = sc.nextInt()-1;
+				add(index,v);
+				outdegree[index]++;
+			}
+		}
+	}
+	public static void main(String[] args) {
+		Problem42 theApp = new Problem42();
+		try {
+			Scanner sc = new Scanner(new File("input42.txt"));
+			for(int T=sc.nextInt();T>0;T--) {	// T번 반복
+				theApp.readFile(sc);	// file read complete
+				//theApp.pointsPrint();	// test print
+				//theApp.adjPrint();	// test print
+				theApp.rebuildAdjList();// 모든 정점의 인접한 에지에 대하여 각정렬 수행하여 새 인접 리스트를 만든다
+				//theApp.adjPrint();
+				//theApp.makeCircularList();
+				theApp.detectOuterFace();	// 아우터 페이스를 얻는다.
+				theApp.findAllFace();		// 모든 페이스를 찾아 페이스 테이블 생성
+			}
+			sc.close();
+		}catch(FileNotFoundException e) {System.out.println("file not found...");}
+	}
+//	private void pointsPrint()
+//	{
+//		System.out.println("points table:");
+//		for(int i=0;i<N;i++)
+//		{
+//			System.out.println("["+(i+1)+"]: ("+points[i].x+", "+points[i].y+")");
+//		}
+//	}
+//	private void adjPrint()
+//	{
+//		System.out.println("adjList:");
+//		for(int i=0;i<N;i++)
+//		{
+//			Edge p = adjList[i];
+//			System.out.print("["+(i+1)+"]: ");
+//			//p = p.next;
+//			while(p!=null) {
+//				System.out.print("["+(p.v[1]+1)+"], ");
+//				p = p.next;
+//			}
+//			System.out.println();
+//		}
+//	}
+	private void facePrint()
+	{
+		for(int i=0;i<faces.size();i++)
+		{
+			System.out.print("face["+i+"]: ");
+			for(int j=0;j<faces.get(i).size;j++)
+			{
+				Edge p=faces.get(i).elements.get(j);
+				System.out.print("("+p.v[0]+","+p.v[1]+") ");
+			}
+			if(i==0) System.out.print("\touter face!");
 			System.out.println();
 		}
 	}
-
 }
