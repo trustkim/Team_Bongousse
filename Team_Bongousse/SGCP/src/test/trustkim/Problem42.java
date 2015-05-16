@@ -59,12 +59,11 @@ public class Problem42 {
 	{
 		int size;		// 페이스를 이루는 정점 개수
 		Vector<Edge> elements;	// 구성하는 에지
-		Face next;		// 페이스간의 인접 관계를 위해
-		boolean visited;// BFS시 체크할 변수
+//		Face next;		// 페이스간의 인접 관계를 위해
+//		boolean visited;// BFS시 체크할 변수
 		Face()
 		{
-			size=0; elements = new Vector<Edge>(); next=null;
-			visited = false;
+			size=0; elements = new Vector<Edge>();
 		}
 	}
 	private int N;				// 전체 그래프의 정점 개수
@@ -73,9 +72,59 @@ public class Problem42 {
 	private Edge[] adjList;		// 그래프를 표현한 인접 리스트. 정점의 id로만 표현
 	private Point[] points;
 	private int[] outdegree;	// 별도의 outdegree배열
-	private Vector<Face> faces;	// 페이스들의 그래프. findAllFace() 하면서 하나씩 추가해 나갈 거라 벡터로 선언.
-
+	private Vector<Face> faces;	// 페이스 테이블. findAllFace() 하면서 하나씩 추가해 나갈 거라 벡터로 선언.
+	private Edge[] adjFaceList;	// 페이스들의 인접리스트
+	
+	/* 이제 탈출이다 */
+	private void solve()
+	{
+		
+	}
+	
+	/* 페이스로 또다른 그래프를 형성 */
+	private boolean isSameEdge(Edge a, Edge b)
+	{	// 두 에지가 동일 한지 검사
+		if(a.v[0]==b.v[0]) return a.v[1]==b.v[1];
+		else if(a.v[0]==b.v[1])
+			return a.v[1]==b.v[0];
+		else return false;
+	}
+	private boolean isAdjFace(int a, int b)
+	{	// 두 페이스에 동일한 에지를 공유하는지 검사
+		Face fi = faces.get(a);
+		Face fj = faces.get(b);
+		for(int i=0;i<fi.size;i++)
+		{
+			Edge p = fi.elements.get(i);
+			for(int j=0;j<fj.size;j++)
+			{
+				Edge q = fj.elements.get(j);
+				if(isSameEdge(p,q))
+					return true;
+			}
+		}
+		return false;
+	}
+	private void  makeAdjFace()
+	{
+		System.out.println(faces.size()-1);
+		adjFaceList = new Edge[faces.size()-1];	// 페이스 테이블 개수 만큼 페이스의 인접리스트 생성
+		for(int i=1;i<faces.size();i++)
+		{
+			for(int k=1;k<faces.size();k++)	// i번째를 제외한 나머지 모든 페이스들과 교차 검색
+			{
+				if(i!=k && isAdjFace(i,k))	// 페이스 i,k에서 동일한 에지가 있으면 인접
+				{	// adjFaceList에 add(k,p)
+					Edge faceEdge = new Edge(i,k);
+					faceEdge.next = adjFaceList[i-1];
+					adjFaceList[i-1] = faceEdge;
+				}
+			}
+		}
+	}
 	// find all inner face
+	
+	/* 페이스 탐지 부분 */
 	private void findAllFace()
 	{	// 아우터 페이스를 제외한 모든 내부 페이스를 찾아 차수가 K인 페이스를 카운트 한다.
 		//System.out.println("inner face detection!");
@@ -255,13 +304,12 @@ public class Problem42 {
 			Scanner sc = new Scanner(new File("input42.txt"));
 			for(int T=sc.nextInt();T>0;T--) {	// T번 반복
 				theApp.readFile(sc);	// file read complete
-				//theApp.pointsPrint();	// test print
-				//theApp.adjPrint();	// test print
 				theApp.rebuildAdjList();// 모든 정점의 인접한 에지에 대하여 각정렬 수행하여 새 인접 리스트를 만든다
-				//theApp.adjPrint();
-				//theApp.makeCircularList();
 				theApp.detectOuterFace();	// 아우터 페이스를 얻는다.
 				theApp.findAllFace();		// 모든 페이스를 찾아 페이스 테이블 생성
+				theApp.makeAdjFace();		// 페이스 테이블을 서로 검사하여 페이스들 간의 인접관계 정의
+				theApp.adjPrint();
+				theApp.solve();
 			}
 			sc.close();
 		}catch(FileNotFoundException e) {System.out.println("file not found...");}
@@ -300,6 +348,21 @@ public class Problem42 {
 				System.out.print("("+p.v[0]+","+p.v[1]+") ");
 			}
 			if(i==0) System.out.print("\touter face!");
+			System.out.println();
+		}
+	}
+	private void adjPrint()
+	{
+		System.out.println("adjList:");
+		for(int i=0;i<adjFaceList.length;i++)
+		{
+			Edge p = adjFaceList[i];
+			System.out.print("["+(i+1)+"]: ");
+			//p = p.next;
+			while(p!=null) {
+				System.out.print("["+(p.v[1])+"], ");
+				p = p.next;
+			}
 			System.out.println();
 		}
 	}
