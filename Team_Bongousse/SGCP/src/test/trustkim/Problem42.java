@@ -3,6 +3,8 @@ package test.trustkim;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -66,19 +68,45 @@ public class Problem42 {
 			size=0; elements = new Vector<Edge>();
 		}
 	}
+	
 	private int N;				// 전체 그래프의 정점 개수
 	private Point startP;;		// 탈출 시작 점
 	
 	private Edge[] adjList;		// 그래프를 표현한 인접 리스트. 정점의 id로만 표현
 	private Point[] points;
 	private int[] outdegree;	// 별도의 outdegree배열
+	
 	private Vector<Face> faces;	// 페이스 테이블. findAllFace() 하면서 하나씩 추가해 나갈 거라 벡터로 선언.
 	private Edge[] adjFaceList;	// 페이스들의 인접리스트
 	
 	/* 이제 탈출이다 */
+	private int findStartFace(int x0, int y0)
+	{
+		int resIndex = 0;
+		for(int i=0;i<adjFaceList.length;i++)
+		{
+			if(true)
+				resIndex = i;
+		}
+		return resIndex;
+	}
 	private void solve()
 	{
+		boolean[] visited = new boolean[adjFaceList.length];
+		Queue<Face> queue = new LinkedList<Face>();
 		
+		int start = findStartFace(startP.x,startP.y);
+		
+		queue.offer(faces.get(start));
+		visited[start] = true;
+		int dist = 0;
+		while(!queue.isEmpty())
+		{
+			Face cur = queue.poll();
+			
+			dist++;
+		}
+		System.out.println(dist);
 	}
 	
 	/* 페이스로 또다른 그래프를 형성 */
@@ -107,17 +135,17 @@ public class Problem42 {
 	}
 	private void  makeAdjFace()
 	{
-		System.out.println(faces.size()-1);
-		adjFaceList = new Edge[faces.size()-1];	// 페이스 테이블 개수 만큼 페이스의 인접리스트 생성
-		for(int i=1;i<faces.size();i++)
+		adjFaceList = new Edge[faces.size()];	// 페이스 테이블 개수 만큼 페이스의 인접리스트 생성.
+		// 아우터 페이스를 포함하여 인접리스트를 만든다!
+		for(int i=0;i<faces.size();i++)
 		{
-			for(int k=1;k<faces.size();k++)	// i번째를 제외한 나머지 모든 페이스들과 교차 검색
+			for(int k=0;k<faces.size();k++)	// i번째를 제외한 나머지 모든 페이스들과 교차 검색
 			{
 				if(i!=k && isAdjFace(i,k))	// 페이스 i,k에서 동일한 에지가 있으면 인접
 				{	// adjFaceList에 add(k,p)
 					Edge faceEdge = new Edge(i,k);
-					faceEdge.next = adjFaceList[i-1];
-					adjFaceList[i-1] = faceEdge;
+					faceEdge.next = adjFaceList[i];
+					adjFaceList[i] = faceEdge;
 				}
 			}
 		}
@@ -309,6 +337,7 @@ public class Problem42 {
 				theApp.findAllFace();		// 모든 페이스를 찾아 페이스 테이블 생성
 				theApp.makeAdjFace();		// 페이스 테이블을 서로 검사하여 페이스들 간의 인접관계 정의
 				theApp.adjPrint();
+				
 				theApp.solve();
 			}
 			sc.close();
@@ -357,7 +386,7 @@ public class Problem42 {
 		for(int i=0;i<adjFaceList.length;i++)
 		{
 			Edge p = adjFaceList[i];
-			System.out.print("["+(i+1)+"]: ");
+			System.out.print("["+(i)+"]: ");
 			//p = p.next;
 			while(p!=null) {
 				System.out.print("["+(p.v[1])+"], ");
