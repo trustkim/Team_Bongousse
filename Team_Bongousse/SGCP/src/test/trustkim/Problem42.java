@@ -100,8 +100,8 @@ public class Problem42 {
 		}
 		Queue<Integer> queue = new LinkedList<Integer>();
 		
-		int start = findStartFace(startP.x,startP.y);	// 외부이면 0을 반환
-		//int start = 4;	// 테스트용 코드ㄴ
+		//int start = findStartFace(startP.x,startP.y);	// 외부이면 0을 반환
+		int start = 4;	// 테스트용 코드
 		queue.offer(start);
 		visited[start] = 0;
 		
