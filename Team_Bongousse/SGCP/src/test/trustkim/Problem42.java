@@ -370,29 +370,6 @@ public class Problem42 {
 			sc.close();
 		}catch(FileNotFoundException e) {System.out.println("file not found...");}
 	}
-//	private void pointsPrint()
-//	{
-//		System.out.println("points table:");
-//		for(int i=0;i<N;i++)
-//		{
-//			System.out.println("["+(i+1)+"]: ("+points[i].x+", "+points[i].y+")");
-//		}
-//	}
-//	private void adjPrint()
-//	{
-//		System.out.println("adjList:");
-//		for(int i=0;i<N;i++)
-//		{
-//			Edge p = adjList[i];
-//			System.out.print("["+(i+1)+"]: ");
-//			//p = p.next;
-//			while(p!=null) {
-//				System.out.print("["+(p.v[1]+1)+"], ");
-//				p = p.next;
-//			}
-//			System.out.println();
-//		}
-//	}
 	private void facePrint()
 	{
 		for(int i=0;i<faces.size();i++)
