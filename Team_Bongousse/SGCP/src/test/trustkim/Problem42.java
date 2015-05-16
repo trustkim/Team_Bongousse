@@ -3,6 +3,7 @@ package test.trustkim;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -83,30 +84,56 @@ public class Problem42 {
 	private int findStartFace(int x0, int y0)
 	{
 		int resIndex = 0;
-		for(int i=0;i<adjFaceList.length;i++)
+		for(int i=1;i<adjFaceList.length;i++)
 		{
 			if(true)
 				resIndex = i;
 		}
 		return resIndex;
 	}
-	private void solve()
+	private int solve()
 	{
-		boolean[] visited = new boolean[adjFaceList.length];
-		Queue<Face> queue = new LinkedList<Face>();
-		
-		int start = findStartFace(startP.x,startP.y);
-		
-		queue.offer(faces.get(start));
-		visited[start] = true;
-		int dist = 0;
-		while(!queue.isEmpty())
+		int[] visited = new int[adjFaceList.length];
+		for(int i=0;i<visited.length;i++)
 		{
-			Face cur = queue.poll();
-			
-			dist++;
+			visited[i] = -1;
 		}
-		System.out.println(dist);
+		Queue<Integer> queue = new LinkedList<Integer>();
+		
+		int start = findStartFace(startP.x,startP.y);	// 외부이면 0을 반환
+		//int start = 4;	// 테스트용 코드ㄴ
+		queue.offer(start);
+		visited[start] = 0;
+		
+		HashSet<Integer> outCheck = new HashSet<Integer>();	// 아우터 페이스에 인접한 페이스를 저장할 해쉬 셋	
+		Edge adjOuter = adjFaceList[0];
+		while(adjOuter!=null)
+		{
+			outCheck.add(adjOuter.v[1]);
+			adjOuter = adjOuter.next;
+		} // 아우터 페이스로 BFS의 베이스케이스를 탐지
+
+		while(start>0&&!queue.isEmpty())
+		{
+			int cur = queue.poll();
+			Edge curEdge = adjFaceList[cur];
+			while(curEdge!=null)
+			{
+				if(outCheck.contains(cur))	// 다음 페이스가 아우터 페이스와 인접했는지 검사
+				{
+					return visited[cur]+1;
+				}
+				int next = curEdge.v[1];
+				visited[cur] = visited[cur];
+				if(visited[next]<0)
+				{
+					queue.offer(next);
+					visited[next] = visited[cur]+1;
+				}
+				curEdge = curEdge.next;
+			}
+		}
+		return 0;	// 외부로부터 출발하는 점이 주어지면 0을 반환
 	}
 	
 	/* 페이스로 또다른 그래프를 형성 */
@@ -338,7 +365,7 @@ public class Problem42 {
 				theApp.makeAdjFace();		// 페이스 테이블을 서로 검사하여 페이스들 간의 인접관계 정의
 				theApp.adjPrint();
 				
-				theApp.solve();
+				System.out.println(theApp.solve());
 			}
 			sc.close();
 		}catch(FileNotFoundException e) {System.out.println("file not found...");}
