@@ -57,6 +57,40 @@ public class Problem42 {
 
 			return crossProduct(vecter_oq,vecter_or);
 		}
+		public int compareTo(Point r)
+		{
+			Point o = points[this.v[0]];
+			Point q = points[this.v[1]];
+//			Point r = points[other.v[1]];
+			Point vecter_oq = new Point(q.x-o.x,q.y-o.y);
+			Point vecter_or = new Point(r.x-o.x,r.y-o.y);
+
+			if(vecter_oq.x >= 0 && vecter_or.x < 0) return -1;
+			if(vecter_oq.x <= 0 && vecter_or.x > 0) return 1;
+			//if(vecter_oq.x == 0 && vecter_or.x == 0) ;
+
+			return crossProduct(vecter_oq,vecter_or);
+		}
+		public boolean intersects(Point other_u, Point other_v)
+		{
+			Point line = new Point(points[v[0]].x-points[v[1]].x,points[v[0]].y-points[v[1]].y);
+			Point other1 = new Point(points[v[0]].x-other_u.x,points[v[0]].y-other_u.y);
+			Point other2 = new Point(points[v[0]].x-other_v.x,points[v[0]].y-other_v.y);
+			int result1 = crossProduct(line,other1);
+			int result2 = crossProduct(line,other2);
+			if(result1*result2 >= 0)
+				return false;
+			
+			line = new Point(other_u.x-other_v.x,other_u.y-other_v.y);
+			other1 = new Point(other_u.x-points[v[0]].x,other_u.y-points[v[0]].y);
+			other2 = new Point(other_u.x-points[v[1]].x,other_u.y-points[v[1]].y);
+			result1 = crossProduct(line,other1);
+			result2 = crossProduct(line,other2);
+			if(result1*result2 >= 0)
+				return false;
+			
+			return true;
+		}
 	}
 	private class Face
 	{
@@ -81,15 +115,31 @@ public class Problem42 {
 	private Edge[] adjFaceList;	// 페이스들의 인접리스트
 	
 	/* 이제 탈출이다 */
-	private int findStartFace(int x0, int y0)
+	private boolean isInnerPoint(int faceIndex)
 	{
-		int resIndex = 0;
-		for(int i=1;i<adjFaceList.length;i++)
+		Face fi = faces.get(faceIndex);	// 현재 검사하려는 face
+		int interCnt = 0;
+		for(int i=0;i<fi.size;i++)	// fi의 모든 정점을 방문하면서 검사
 		{
-			if(true)
-				resIndex = i;
+			Point O = new Point(0,0);	// 임의의 점을 원점으로 해봄
+			Edge p = fi.elements.get(i);// fi의 i번째 에지
+			//System.out.println(p.v[0]+", "+p.v[1]);
+			if(p.intersects(O, startP))
+				interCnt++;
 		}
-		return resIndex;
+		
+		return interCnt%2!=0;
+	}
+	private int findStartFace()
+	{
+		for(int i=1;i<faces.size();i++)	// outer face를 제외한 모든 face에 대해 검사
+		{
+			// i번째 face의 모든 점에 대해 왼쪽 에지와 오른쪽 에지 사이에 주어진 점과 이루는 에지가 위치하는지 에지 비교로 검사
+			if(isInnerPoint(i))
+				return i;
+		}
+		return 0;	// 어떤 내부 face 내에도 있지 않으면 페이즈 내부에 존재 하지 않음. 0을 반환.
+		// 좀 더 엄격하게는 페이스를 구성하는 에지 위에 있어도 0을 반환
 	}
 	private int solve()
 	{
@@ -100,8 +150,9 @@ public class Problem42 {
 		}
 		Queue<Integer> queue = new LinkedList<Integer>();
 		
-		//int start = findStartFace(startP.x,startP.y);	// 외부이면 0을 반환
-		int start = 4;	// 테스트용 코드
+		System.out.println("findStartFace() test: "+findStartFace());
+		int start = findStartFace();	// 외부이면 0을 반환
+		//int start = 0;	// 테스트용 코드
 		queue.offer(start);
 		visited[start] = 0;
 		
@@ -201,7 +252,7 @@ public class Problem42 {
 		}
 //		System.out.println(cnt);
 //		System.out.println(faces.size());
-		facePrint();
+		//facePrint();
 	}
 	// find a new face
 	private void findFace(int start, int end)
@@ -363,7 +414,7 @@ public class Problem42 {
 				theApp.detectOuterFace();	// 아우터 페이스를 얻는다.
 				theApp.findAllFace();		// 모든 페이스를 찾아 페이스 테이블 생성
 				theApp.makeAdjFace();		// 페이스 테이블을 서로 검사하여 페이스들 간의 인접관계 정의
-				theApp.adjPrint();
+				//theApp.adjPrint();
 				
 				System.out.println(theApp.solve());
 			}

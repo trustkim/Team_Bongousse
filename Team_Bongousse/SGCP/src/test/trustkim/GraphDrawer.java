@@ -39,8 +39,8 @@ public class GraphDrawer extends JPanel {
 			}
 		}
 		// 별도의 위치에 그림을 그리려면 여기!
-		// g.setColor(Color.RED);
-		// g.fillOval(convertToPixelX(60)-4, convertToPixelY(50)-4, 8, 8);
+		 g.setColor(Color.RED);
+		 g.fillOval(convertToPixelX(7)-4, convertToPixelY(8)-4, 8, 8);
 	}
 
 	private Vertex[] vertices;
