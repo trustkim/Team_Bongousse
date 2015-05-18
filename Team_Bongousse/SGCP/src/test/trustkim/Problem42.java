@@ -91,6 +91,59 @@ public class Problem42 {
 			
 			return true;
 		}
+		private boolean isCross(Point other_u, Point other_v){
+			Point u = points[this.v[0]]; Point v = points[this.v[1]];
+			int L1minX, L1maxX, L1minY, L1maxY;
+			if(u.x < v.x){ L1minX = u.x; L1maxX = v.x; }
+			else{ L1maxX = u.x; L1minX = v.x; }
+			if(u.y < v.y){ L1minY = u.y; L1maxY = v.y; }
+			else{ L1maxY = u.y; L1minY = v.y; }
+
+			int L2minX, L2maxX, L2minY, L2maxY;
+			if(other_u.x < other_v.x){ L2minX = other_u.x; L2maxX = other_v.x; }
+			else{ L2maxX = other_u.x; L2minX = other_v.x; }
+			if(other_u.y < other_v.y){ L2minY = other_u.y; L2maxY = other_v.y; }
+			else{ L2maxY = other_u.y; L2minY = other_v.y; }
+
+			if(v.x != u.x && other_v.x != other_u.x){
+				double angle1 = (double)(v.y-u.y)/(double)(v.x-u.x);
+				double d1 = u.y - (angle1*u.x);
+				double angle2 = (double)(other_v.y-other_u.y)/(double)(other_v.x-other_u.x);
+				double d2 = other_u.y - (angle2*other_u.x);
+				if(angle1 == angle2){ return false; }
+				double crossX = (d2-d1)/(angle1-angle2);
+				double crossY = angle1*crossX + d1;
+
+				if(crossX >= L1minX && crossX <= L1maxX && crossX >= L2minX && crossX <= L2maxX &&
+						crossY >= L1minY && crossY <= L1maxY && crossY >= L2minY && crossY <= L2maxY){
+					return true;
+				}
+				else{return false;}
+			}
+			else if(v.x != u.x && other_v.x == other_u.x){
+				double angle1 = (double)(v.y-u.y)/(double)(v.x-u.x);
+				double d1 = u.y - (angle1*u.x);
+
+				double crossY = angle1*other_v.x + d1;
+
+				if(crossY >= L1minY && crossY <= L1maxY && crossY >= L2minY && crossY <= L2maxY){
+					return true;
+				}
+				else{return false;}
+			}
+			else if(v.x == u.x && other_v.x != other_u.x){
+				double angle2 = (double)(other_v.y-other_u.y)/(double)(other_v.x-other_u.x);
+				double d2 = other_u.y - (angle2*other_u.x);
+
+				double crossY = angle2*v.x + d2;
+
+				if(crossY >= L1minY && crossY <= L1maxY && crossY >= L2minY && crossY <= L2maxY){
+					return true;
+				}
+				else{return false;}
+			}
+			else {return false;}
+		}
 	}
 	private class Face
 	{
@@ -124,7 +177,9 @@ public class Problem42 {
 			Point O = new Point(0,0);	// 임의의 점을 원점으로 해봄
 			Edge p = fi.elements.get(i);// fi의 i번째 에지
 			//System.out.println(p.v[0]+", "+p.v[1]);
-			if(p.intersects(O, startP))
+//			if(p.intersects(O, startP))
+//				interCnt++;
+			if(p.isCross(O, startP))
 				interCnt++;
 		}
 		
@@ -411,9 +466,11 @@ public class Problem42 {
 			for(int T=sc.nextInt();T>0;T--) {	// T번 반복
 				theApp.readFile(sc);	// file read complete
 				theApp.rebuildAdjList();// 모든 정점의 인접한 에지에 대하여 각정렬 수행하여 새 인접 리스트를 만든다
+				//theApp.adjPrint();
 				theApp.detectOuterFace();	// 아우터 페이스를 얻는다.
 				theApp.findAllFace();		// 모든 페이스를 찾아 페이스 테이블 생성
 				theApp.makeAdjFace();		// 페이스 테이블을 서로 검사하여 페이스들 간의 인접관계 정의
+				//theApp.facePrint();
 				//theApp.adjPrint();
 				
 				System.out.println(theApp.solve());
@@ -435,7 +492,7 @@ public class Problem42 {
 			System.out.println();
 		}
 	}
-	private void adjPrint()
+	private void adjFacePrint()
 	{
 		System.out.println("adjList:");
 		for(int i=0;i<adjFaceList.length;i++)
@@ -445,6 +502,20 @@ public class Problem42 {
 			//p = p.next;
 			while(p!=null) {
 				System.out.print("["+(p.v[1])+"], ");
+				p = p.next;
+			}
+			System.out.println();
+		}
+	}
+	
+	//#노드별로 엣지가 각정렬되었는지 확인용 출력코드
+	private void adjPrint(){
+		for(int i=0;i<N;i++){
+			Edge p = adjList[i];
+			System.out.print((i+1)+"번 각정렬 순서: ");
+			while(p!=null)
+			{
+				System.out.print((p.v[1]+1) + " ");
 				p = p.next;
 			}
 			System.out.println();
