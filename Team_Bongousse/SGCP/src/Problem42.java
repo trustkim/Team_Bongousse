@@ -48,19 +48,25 @@ public class Problem42 {
 		}
 		public boolean intersects(Point other_u, Point other_v)
 		{
-			Point line = new Point(points[v[0]].x-points[v[1]].x,points[v[0]].y-points[v[1]].y);
-			Point other1 = new Point(points[v[0]].x-other_u.x,points[v[0]].y-other_u.y);
-			Point other2 = new Point(points[v[0]].x-other_v.x,points[v[0]].y-other_v.y);
+			Point o = points[v[0]];
+			Point p = points[v[1]];
+			Point line = new Point(p.x-o.x,p.y-o.y);
+			Point other1 = new Point(other_u.x-o.x,other_u.y-o.y);
+			Point other2 = new Point(other_v.x-o.x,other_v.y-o.y);
 			int result1 = crossProduct(line,other1);
 			int result2 = crossProduct(line,other2);
+			if(result1!=0) result1 /= Math.abs(result1);
+			if(result2!=0) result2 /= Math.abs(result2);
 			if(result1*result2 >= 0)
 				return false;
 			
-			line = new Point(other_u.x-other_v.x,other_u.y-other_v.y);
-			other1 = new Point(other_u.x-points[v[0]].x,other_u.y-points[v[0]].y);
-			other2 = new Point(other_u.x-points[v[1]].x,other_u.y-points[v[1]].y);
+			line = new Point(other_v.x-other_u.x,other_v.y-other_u.y);
+			other1 = new Point(o.x-other_u.x,o.y-other_u.y);
+			other2 = new Point(p.x-other_u.x,p.y-other_u.y);
 			result1 = crossProduct(line,other1);
 			result2 = crossProduct(line,other2);
+			if(result1!=0) result1 /= Math.abs(result1);
+			if(result2!=0) result2 /= Math.abs(result2);
 			if(result1*result2 >= 0)
 				return false;
 			
