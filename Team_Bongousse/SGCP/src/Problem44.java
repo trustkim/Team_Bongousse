@@ -1,5 +1,3 @@
-package test.trustkim;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -31,7 +29,6 @@ public class Problem44 {
 	}
 	private class Edge
 	{
-		//Point u,v;
 		int u,v;
 		Edge next;
 		Edge(int u, int v)
@@ -74,7 +71,6 @@ public class Problem44 {
 	private class Rectangle
 	{
 		int[] v;
-		private int w,h;
 		Edge[] edges;
 		Rectangle(int x,int y,int w,int h)
 		{
@@ -87,7 +83,6 @@ public class Problem44 {
 			allPoints.addElement(new Point(x+w,y+h));
 			v[3] = allPoints.size();
 			allPoints.addElement(new Point(x+w,y));
-			this.w=w; this.h=h;
 			edges = new Edge[4];
 			edges[0] = new Edge(v[0],v[1]);
 			edges[1] = new Edge(v[1],v[2]);
@@ -103,7 +98,7 @@ public class Problem44 {
 	private Vector<Integer> samples;// 출발점 도착점 사이의 선분에 교점을 갖는 직사각형의 인덱스 배열
 	private Vector<Point> points;	// 출발점 도착점 사이의 선분에 교점을 갖는 직사각형 위의 모든 점들의 배열
 	private int N;	// 선별된 점의 개수
-	private Edge[] edgeTable;	// 
+	private Edge[] edgeTable;	// 선별된 점의 인덱스를 갖고 에지 테이블을 인접리스트로 형성
 
 	/* Dijkstra를 위한 멤버 */
 	private double[] key;
@@ -273,25 +268,9 @@ public class Problem44 {
 			theApp.readFile(sc);
 			theApp.init();
 			theApp.findRect();
-			theApp.pointsPrint();
 			theApp.makeWeightTable();
-			theApp.edgesPrint();
 			theApp.dijkstra();
 		}
 		sc.close();
-	}
-	private void pointsPrint()
-	{
-		for(Point p:points)
-		{
-			System.out.println(p.x+", "+p.y);
-		}
-	}
-	private void edgesPrint()
-	{
-		for(Edge p:edgeTable)
-		{
-			if(p!=null) System.out.println("("+points.get(p.u).x+", "+points.get(p.u).y+") -> ("+points.get(p.v).x+", "+points.get(p.v).y+")");
-		}
 	}
 }
