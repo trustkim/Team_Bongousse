@@ -14,7 +14,7 @@ public class Problem45 {
 			next = null;
 		}
 	}
-	
+
 	private int N;			// 정점 개수	
 	private int M;			// 에지 개수
 	private int[][] edges;	// 단순한 에지 테이블
@@ -46,7 +46,7 @@ public class Problem45 {
 		}
 		return sum;
 	}
-	
+
 	/* Dijkstra를 위한 멤버 */
 	private int[] key;
 	private int[] pi;
@@ -121,7 +121,7 @@ public class Problem45 {
 		N = sc.nextInt();
 		M = sc.nextInt();
 		edges=new int[M][3];	// 모든 에지에 대한 테이블. 나중에 인접리스트 뒤집을 때 쓰려교...
-		adjList = new Edge[M];
+		adjList = new Edge[N];
 		for(int i=0;i<M;i++)
 		{
 			int u=sc.nextInt(),v=sc.nextInt(),w=sc.nextInt();
@@ -145,7 +145,6 @@ public class Problem45 {
 			test.initDijkstra();	// 읽은 파일로 다른 필요한 자료구조를 세팅
 			test.dijkstra();// 다익스트라 수행
 			test.inverseEdge();// 모든 에지를 뒤집은 인접리스트를 얻음
-			
 			System.out.println(test.countPath(test.dest));// 최단경로의 개수를 구함
 		}
 		sc.close();
