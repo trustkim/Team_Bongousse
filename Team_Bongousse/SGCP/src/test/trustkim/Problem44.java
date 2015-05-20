@@ -153,7 +153,7 @@ public class Problem44 {
 				if(include[v])
 					;// S에 포함된 key[v]는 갱신하지 않음
 				// double weight = findWeight(p,type);
-				double dist = points.get(p.u).getDist(points.get(v));
+				double dist = allPoints.get(p.u).getDist(allPoints.get(v));
 				if(key[v]==-1 || key[v] > key[u]+dist)
 				{
 					key[v] = key[u]+dist;
@@ -167,9 +167,9 @@ public class Problem44 {
 	}
 	private boolean isAdjEdge(Edge p)
 	{
-		for(int i:samples)
+		for(Rectangle ri:rects)
 		{
-			Rectangle ri = rects[i];
+			//Rectangle ri = rects[i];
 			for(Edge q:ri.edges)
 			{
 				if(p.intersects(q))
@@ -193,14 +193,14 @@ public class Problem44 {
 	}
 	private void makeWeightTable()
 	{
-		for(int i=0;i<points.size();i++)	// 모든 점에 대하여
+		for(int i=0;i<allPoints.size();i++)	// 모든 점에 대하여
 		{
-			for(int j=0;j<points.size();j++)
+			for(int j=0;j<allPoints.size();j++)
 			{
 				if(i!=j)
 				{
 					int u,v;
-					if(points.get(i).compareTo(points.get(j))==-1)
+					if(allPoints.get(i).compareTo(allPoints.get(j))==-1)
 					{
 						u = i;
 						v = j;
@@ -218,27 +218,27 @@ public class Problem44 {
 	}
 	private void findRect()
 	{	// 출발점 도착점을 잊는 선분에 교점을 갖는 직사각형을 추려냄.
-		Edge line = new Edge(0,1);
-		for(int i=0;i<M;i++)
-		{
-			Rectangle ri = rects[i];
-			for(Edge p:ri.edges)
-			{
-				if(line.intersects(p))
-				{
-					//System.out.println(i);
-					samples.add(i);
-					for(int j=0;j<4;j++)
-					{
-						points.add(allPoints.get(ri.v[j]));
-						//interRect.add(i);
-						
-					}
-					break;	
-				}
-			}
-		}
-		N = points.size();
+//		Edge line = new Edge(0,1);
+//		for(int i=0;i<M;i++)
+//		{
+//			Rectangle ri = rects[i];
+//			for(Edge p:ri.edges)
+//			{
+//				//if(line.intersects(p))
+//				//{
+//					//System.out.println(i);
+//					samples.add(i);
+//					for(int j=0;j<4;j++)
+//					{
+//						points.add(allPoints.get(ri.v[j]));
+//						//interRect.add(i);
+//						
+//					}
+//					//break;	
+//				//}
+//			}
+//		}
+		N = allPoints.size();
 		edgeTable = new Edge[N];
 	}
 	private void init()
@@ -273,9 +273,9 @@ public class Problem44 {
 			theApp.readFile(sc);
 			theApp.init();
 			theApp.findRect();
-			theApp.pointsPrint();
+			//theApp.pointsPrint();
 			theApp.makeWeightTable();
-			theApp.edgesPrint();
+			//theApp.edgesPrint();
 			theApp.dijkstra();
 		}
 		sc.close();
@@ -291,7 +291,7 @@ public class Problem44 {
 	{
 		for(Edge p:edgeTable)
 		{
-			if(p!=null) System.out.println("("+points.get(p.u).x+", "+points.get(p.u).y+") -> ("+points.get(p.v).x+", "+points.get(p.v).y+")");
+			if(p!=null) System.out.println("("+allPoints.get(p.u).x+", "+allPoints.get(p.u).y+") -> ("+allPoints.get(p.v).x+", "+allPoints.get(p.v).y+")");
 		}
 	}
 }

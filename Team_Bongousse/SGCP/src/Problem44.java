@@ -95,8 +95,8 @@ public class Problem44 {
 	private Point dest;		// 도착점
 	private Vector<Point> allPoints;	// 모든 점의 테이블
 	private Rectangle[] rects;	// 직사각형 배열
-	private Vector<Integer> samples;// 출발점 도착점 사이의 선분에 교점을 갖는 직사각형의 인덱스 배열
-	private Vector<Point> points;	// 출발점 도착점 사이의 선분에 교점을 갖는 직사각형 위의 모든 점들의 배열
+	//private Vector<Integer> samples;// 출발점 도착점 사이의 선분에 교점을 갖는 직사각형의 인덱스 배열
+	//private Vector<Point> allPoints;	// 출발점 도착점 사이의 선분에 교점을 갖는 직사각형 위의 모든 점들의 배열
 	private int N;	// 선별된 점의 개수
 	private Edge[] edgeTable;	// 선별된 점의 인덱스를 갖고 에지 테이블을 인접리스트로 형성
 
@@ -148,7 +148,7 @@ public class Problem44 {
 				if(include[v])
 					;// S에 포함된 key[v]는 갱신하지 않음
 				// double weight = findWeight(p,type);
-				double dist = points.get(p.u).getDist(points.get(v));
+				double dist = allPoints.get(p.u).getDist(allPoints.get(v));
 				if(key[v]==-1 || key[v] > key[u]+dist)
 				{
 					key[v] = key[u]+dist;
@@ -162,9 +162,8 @@ public class Problem44 {
 	}
 	private boolean isAdjEdge(Edge p)
 	{
-		for(int i:samples)
+		for(Rectangle ri:rects)
 		{
-			Rectangle ri = rects[i];
 			for(Edge q:ri.edges)
 			{
 				if(p.intersects(q))
@@ -188,14 +187,14 @@ public class Problem44 {
 	}
 	private void makeWeightTable()
 	{
-		for(int i=0;i<points.size();i++)	// 모든 점에 대하여
+		for(int i=0;i<allPoints.size();i++)	// 모든 점에 대하여
 		{
-			for(int j=0;j<points.size();j++)
+			for(int j=0;j<allPoints.size();j++)
 			{
 				if(i!=j)
 				{
 					int u,v;
-					if(points.get(i).compareTo(points.get(j))==-1)
+					if(allPoints.get(i).compareTo(allPoints.get(j))==-1)
 					{
 						u = i;
 						v = j;
@@ -211,36 +210,10 @@ public class Problem44 {
 			}
 		}
 	}
-	private void findRect()
-	{	// 출발점 도착점을 잊는 선분에 교점을 갖는 직사각형을 추려냄.
-		Edge line = new Edge(0,1);
-		for(int i=0;i<M;i++)
-		{
-			Rectangle ri = rects[i];
-			for(Edge p:ri.edges)
-			{
-				if(line.intersects(p))
-				{
-					//System.out.println(i);
-					samples.add(i);
-					for(int j=0;j<4;j++)
-					{
-						points.add(allPoints.get(ri.v[j]));
-						//interRect.add(i);
-						
-					}
-					break;	
-				}
-			}
-		}
-		N = points.size();
-		edgeTable = new Edge[N];
-	}
 	private void init()
 	{	// 필요한 전역 자료구조를 한 곳에서 초기화 함. 알아보기 쉬우라고
-		samples = new Vector<Integer>();
-		points = new Vector<Point>();
-		points.add(start); points.add(dest);
+		N = allPoints.size();
+		edgeTable = new Edge[N];
 	}
 	private void readFile(Scanner sc)
 	{
@@ -267,7 +240,6 @@ public class Problem44 {
 		{
 			theApp.readFile(sc);
 			theApp.init();
-			theApp.findRect();
 			theApp.makeWeightTable();
 			theApp.dijkstra();
 		}
