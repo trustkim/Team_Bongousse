@@ -94,12 +94,14 @@ public class Problem45 {
 				int v = p.v;
 				if(include[v])
 					;// S에 포함된 key[v]는 갱신하지 않음
-				// double weight = findWeight(p,type);
-				int weight = p.weight;
-				if(key[v]==-1 || key[v] > key[u]+weight)
+				else
 				{
-					key[v] = key[u]+weight;
-					pi[v] = u;
+					int weight = p.weight;
+					if(key[v]==-1 || key[v] > key[u]+weight)
+					{
+						key[v] = key[u]+weight;
+						pi[v] = u;
+					}
 				}
 				p = p.next;
 			}

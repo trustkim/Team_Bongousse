@@ -96,18 +96,20 @@ public class Problem45 {
 				int v = p.v;
 				if(include[v])
 					;// S에 포함된 key[v]는 갱신하지 않음
-				// double weight = findWeight(p,type);
-				int weight = p.weight;
-				if(key[v]==-1 || key[v] > key[u]+weight)
+				else
 				{
-					key[v] = key[u]+weight;
-					pi[v] = u;
+					int weight = p.weight;
+					if(key[v]==-1 || key[v] > key[u]+weight)
+					{
+						key[v] = key[u]+weight;
+						pi[v] = u;
+					}	
 				}
 				p = p.next;
 			}
 		}
 		//System.out.println("dijkstra compelete");
-		System.out.println(key[dest]);
+		System.out.println("dijkstra test: ["+start+"] -> ["+dest+"]: "+key[dest]);
 	}
 	private void add(int u, int v, int weight)
 	{
@@ -124,7 +126,7 @@ public class Problem45 {
 		N = sc.nextInt();
 		M = sc.nextInt();
 		edges=new int[M][3];	// 모든 에지에 대한 테이블. 나중에 인접리스트 뒤집을 때 쓰려교...
-		adjList = new Edge[M];
+		adjList = new Edge[N];
 		for(int i=0;i<M;i++)
 		{
 			int u=sc.nextInt(),v=sc.nextInt(),w=sc.nextInt();
@@ -145,12 +147,12 @@ public class Problem45 {
 		for(int T=sc.nextInt();T>0;T--)
 		{
 			test.readfile(sc);
-			test.edgesprint();
+			//test.edgesprint();
 			test.initDijkstra();	// 읽은 파일로 다른 필요한 자료구조를 세팅
 			test.dijkstra();// 다익스트라 수행
-			test.nodesprint();
+			//test.nodesprint();
 			test.inverseEdge();// 모든 에지를 뒤집은 인접리스트를 얻음
-			test.edgesprint();
+			//test.edgesprint();
 			
 			System.out.println(test.countPath(test.dest));// 최단경로의 개수를 구함
 		}
