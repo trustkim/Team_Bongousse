@@ -22,43 +22,18 @@ public class Problem45 {
 	private int start;		// 출발점
 	private int dest;		// 도착점
 
-	/* 본격적인 풀이 solve */
-	private void inverseEdge()
-	{	// 인접리스트의 모든 에지의 방향을 뒤집은 인접리스트를 새로 만들어 주는 함수
-		adjList = new Edge[N];
-		for(int[] i:edges)
-		{
-			int u = i[1], v=i[0], w=i[2];
-			add(u,v,w);
-		}
-	}
-	private int countPath(int v)
-	{	// start부터 v까지의 최단경로의 개수 총 합을 구하여 반환하는 함수 
-		int sum=0;
-		if(v==start)
-			return 1;
-		Edge p = adjList[v];
-		while(p!=null)
-		{
-			if(key[p.u]-p.weight==key[p.v])
-				sum += countPath(p.v);
-			p = p.next;
-		}
-		return sum;
-	}
-
 	/* Dijkstra를 위한 멤버 */
-	private int[] key;
-	private int[] pi;
+	private int[] d;
+	private int[] c;
 	private boolean[] include;
 	private void initDijkstra()
 	{
-		key = new int[N];	// 전체 정점들의 key값을 매번 갱신시켜 나감. 따라서 N개
-		pi = new int[N];		// 얘도 N개
+		d = new int[N];	// 전체 정점들의 key값을 매번 갱신시켜 나감. 따라서 N개
+		c = new int[N];		// 얘도 N개
 		include = new boolean[N];
 		for(int i=0;i<N;i++)
 		{
-			key[i] = -1;		// key를 무한으로
+			d[i] = -1;		// key를 무한으로
 		}
 	}
 	private int findMinKey()
@@ -69,7 +44,7 @@ public class Problem45 {
 		for(int i=0;i<N;i++)
 		{
 			if(!include[i]){
-				int temp = key[i];
+				int temp = d[i];
 				if(minKey == -1 || (temp!=-1&&minKey > temp))
 				{
 					minKey = temp;
@@ -82,7 +57,8 @@ public class Problem45 {
 	private void dijkstra()
 	{	// Prim의 알고리즘과 거의 동일하다!
 		initDijkstra();
-		key[start] = 0;		// 시작 정점을 정함.
+		d[start] = 0;		// 시작 정점을 정함.
+		c[start] = 1;		// 최단 경로의 개수도 초기 값을 정해 줘야...
 		int cnt = 0;
 		while(cnt<N)		// n-1번 반복. 따로 dest까지 결정되면 멈추도록 하지 않음.
 		{
@@ -97,16 +73,21 @@ public class Problem45 {
 				else
 				{
 					int weight = p.weight;
-					if(key[v]==-1 || key[v] > key[u]+weight)
+					if(d[v]==-1 || d[v] > d[u]+weight)
 					{
-						key[v] = key[u]+weight;
-						pi[v] = u;
+						d[v] = d[u]+weight;
+						c[v] = c[u];					// pi는 필요 없었음.
+					}
+					else if(d[v] == d[u]+weight)		// 최단 경로의 개수를 세기 위해서는 이 부분만 추가해주면 된다.
+					{
+						c[v] += c[u];
 					}
 				}
 				p = p.next;
 			}
 		}
 		//System.out.println("dijkstra compelete");
+		System.out.println(c[dest]);
 	}
 	private void add(int u, int v, int weight)
 	{
@@ -146,8 +127,6 @@ public class Problem45 {
 			test.readfile(sc);
 			test.initDijkstra();	// 읽은 파일로 다른 필요한 자료구조를 세팅
 			test.dijkstra();// 다익스트라 수행
-			test.inverseEdge();// 모든 에지를 뒤집은 인접리스트를 얻음
-			System.out.println(test.countPath(test.dest));// 최단경로의 개수를 구함
 		}
 		sc.close();
 	}
