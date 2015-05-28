@@ -4,11 +4,10 @@ import java.util.Scanner;
 
 public class Problem45 {
 	private class Edge{
-		int u, v;
+		int v;
 		int weight;
 		Edge next;
 		Edge(int u, int v, int w){
-			this.u = u;
 			this.v = v;
 			this.weight = w;
 			next = null;
