@@ -15,9 +15,7 @@ class Problem46{
 		m = new int[n][n];
 		for(int i=0;i<n;i++){
 			for(int j=i;j<n;j++){
-				if(i==1 && j==1)
-					m[i][j] = 1;
-				else if(i==0)
+				if(i==0)
 					m[i][j] = 1;
 				else if(i==j)
 					m[i][j] = m[i-1][j];
