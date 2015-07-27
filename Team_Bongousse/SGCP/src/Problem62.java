@@ -10,7 +10,7 @@ public class Problem62 {
 		int s,f;
 		public Interval(int start, int finish) {s=start;f=finish;}
 		boolean isOverlap(Interval other)
-		{
+		{	// 겹치지 않는 경우를 걸러내는게 더 간명함!
 			if(other.f < s)
 				return false;
 			if(f < other.s)
